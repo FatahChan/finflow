@@ -13,7 +13,6 @@ import {
 
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { FloatingInput, FloatingLabel } from "./floating-input";
 
 const Form = FormProvider;
 
@@ -156,12 +155,12 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 export {
-  useFormField,
   Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
 };

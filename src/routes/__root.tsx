@@ -1,4 +1,3 @@
-import { BreadcrumbWithCustomSeparator } from "@/components/breadcrumb-arrow";
 import { GitHubCorner } from "@/components/github-corner";
 import { supabaseClient } from "@/lib/supabase";
 import { type QueryClient, useQueryClient } from "@tanstack/react-query";

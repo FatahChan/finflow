@@ -1,6 +1,5 @@
 import {
   Command,
-  CommandEmpty,
   CommandGroup,
   CommandItem,
   CommandList,
@@ -14,8 +13,8 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { Command as CommandPrimitive } from "cmdk";
-import { Check, ChevronRight } from "lucide-react";
-import { useMemo, useRef, useState } from "react";
+import { Check } from "lucide-react";
+import { useMemo, useState } from "react";
 
 type Props<T extends string> = {
   selectedValue: T;
