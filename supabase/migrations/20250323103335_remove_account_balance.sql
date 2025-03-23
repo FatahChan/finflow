@@ -1,1 +1,1 @@
-DROP TRIGGER IF EXISTS "refresh_account_balance_trigger" ON "public"."transaction";
+  DROP TRIGGER IF EXISTS "refresh_account_balance_trigger" ON "public"."transaction";
