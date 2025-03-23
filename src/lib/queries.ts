@@ -201,6 +201,9 @@ export const useLoginGoogle = () => {
     mutationFn: async () => {
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
+        options: {
+          redirectTo: window.location.origin,
+        },
       });
       if (error) throw new Error(error.message);
       return data;
