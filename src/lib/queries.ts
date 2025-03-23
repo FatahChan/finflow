@@ -194,3 +194,22 @@ export const useDeleteTransactionMutation = () => {
     },
   });
 };
+
+export const useLoginGoogle = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { data, error } = await supabaseClient.auth.signInWithOAuth({
+        provider: "google",
+      });
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
