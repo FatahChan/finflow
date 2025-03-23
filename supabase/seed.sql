@@ -1,0 +1,1 @@
+INSERT INTO "public"."currency" ("code", "slug", "symbol") VALUES ('AUD', 'australian-dollar', 'A$'), ('EGP', 'egyptian-pound', 'ج.م'), ('EUR', 'euro', '€'), ('GBP', 'british-pound', '£'), ('IDR', 'indonesian-rupiah', 'Rp'), ('JPY', 'japanese-yen', '¥'), ('USD', 'us-dollar', '$');
