@@ -1,5 +1,6 @@
 import { account$, sessionStore$, transaction$ } from "@/lib/SupaLegend";
 import { supabaseClient } from "@/lib/supabase";
+import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 const EVENT_TO_LISTEN_TO = [
@@ -9,6 +10,7 @@ const EVENT_TO_LISTEN_TO = [
   "SIGNED_OUT",
 ];
 function useAuthStateChange() {
+  const navigate = useNavigate();
   useEffect(() => {
     const {
       data: { subscription },
@@ -18,6 +20,7 @@ function useAuthStateChange() {
         sessionStore$.delete();
         account$.delete();
         transaction$.delete();
+        navigate({ to: "/login" });
         return;
       }
       sessionStore$.set(session);
@@ -25,7 +28,7 @@ function useAuthStateChange() {
     return () => {
       subscription?.unsubscribe();
     };
-  }, []);
+  }, [navigate]);
 }
 
 export default useAuthStateChange;

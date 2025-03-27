@@ -1,4 +1,5 @@
 import { GitHubCorner } from "@/components/github-corner";
+import HamburgerMenu from "@/components/hamburger-menu";
 import useAuthStateChange from "@/hooks/useAuthStateChange";
 import type { supabaseClient } from "@/lib/supabase";
 import type { QueryClient } from "@tanstack/react-query";
@@ -27,6 +28,7 @@ function RootRoute() {
         >
           <GitHubCorner />
         </a>
+        <HamburgerMenu className="fixed top-0 left-0" />
         <main className="mx-auto max-w-4xl p-6">
           <h1 className="mb-6 text-center font-semibold text-3xl text-white">
             FinFlow

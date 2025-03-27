@@ -18,15 +18,15 @@ export const Logo = ({ className }: { className?: string }) => {
         height="240"
         rx="24"
         stroke="#4F46E5"
-        stroke-width="24"
+        strokeWidth="24"
         fill="none"
       />
       <path
         d="M192 256L236 300L320 216"
         stroke="#4F46E5"
-        stroke-width="32"
-        stroke-linecap="round"
-        stroke-linejoin="round"
+        strokeWidth="32"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

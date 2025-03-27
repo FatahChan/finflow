@@ -182,7 +182,7 @@ export const useLoginGoogle = () => {
       const { data, error } = await supabaseClient.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.origin,
+          redirectTo: `${window.location.origin}`,
         },
       });
       if (error) throw new Error(error.message);
@@ -190,6 +190,23 @@ export const useLoginGoogle = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
+  });
+};
+
+export const useLogout = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw new Error(error.message);
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.removeQueries();
     },
     onError: (error) => {
       toast.error(error.message);
