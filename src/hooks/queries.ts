@@ -8,10 +8,10 @@ import {
   transaction$,
 } from "@/lib/SupaLegend";
 import type { RequiredFields } from "@/lib/type-util";
-import { use$, useObservable } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { toast } from "sonner";
 import type { Database } from "../lib/database.types";
 import { supabaseClient } from "../lib/supabase";
@@ -125,7 +125,11 @@ export const useDeleteAccountMutation = () => {
 
 export type TransactionInsert =
   Database["public"]["Tables"]["transaction"]["Insert"];
-export const useAddTransactionMutation = () => {
+export const useAddTransactionMutation = ({
+  onSuccess,
+}: {
+  onSuccess?: () => void;
+} = {}) => {
   const mutate = useCallback(
     (
       transaction: TransactionInsert &
@@ -141,8 +145,9 @@ export const useAddTransactionMutation = () => {
         ...rest,
       });
       toast.success("Transaction added successfully");
+      onSuccess?.();
     },
-    [],
+    [onSuccess],
   );
   return { mutate };
 };

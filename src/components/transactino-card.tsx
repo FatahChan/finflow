@@ -1,7 +1,6 @@
-import { accountByIdQueryOptions, currencyQueryOptions } from "@/hooks/queries";
+import { useAccountByIdQuery, useCurrencyQuery } from "@/hooks/queries";
 import type { Database } from "@/lib/database.types";
 import { cn } from "@/lib/utils";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
 import { useMemo } from "react";
 import { Card, CardContent, CardHeader } from "./ui/card";
@@ -10,15 +9,12 @@ export function TransactionCard({
   transaction,
 }: { transaction: Database["public"]["Tables"]["transaction"]["Row"] }) {
   const { amount, transaction_type, account_id, name } = transaction;
-  const { data: account } = useSuspenseQuery(
-    accountByIdQueryOptions(account_id),
-  );
-  const { data: currency } = useSuspenseQuery(currencyQueryOptions);
+  const { data: account } = useAccountByIdQuery(account_id);
+  const { data: currency } = useCurrencyQuery();
   const currencySymbol = useMemo(
     () =>
-      currency.data?.find((c) => c.code === account.data?.currency_code)
-        ?.symbol || "",
-    [currency.data, account.data],
+      currency?.find((c) => c.code === account?.currency_code)?.symbol || "",
+    [currency, account?.currency_code],
   );
 
   return (
@@ -51,7 +47,7 @@ export function TransactionCard({
           <div className="flex items-center gap-2 text-muted-foreground text-xs">
             <span>{"Category"}</span>|<span>{"Date"}</span>|
             <span>
-              {account.data?.name} ({account.data?.currency_code})
+              {account?.name} ({account?.currency_code})
             </span>
           </div>
         </div>

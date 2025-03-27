@@ -15,12 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  accountQueryOptions,
-  useAddTransactionMutation,
-} from "@/hooks/queries";
+import { useAccountQuery, useAddTransactionMutation } from "@/hooks/queries";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
@@ -56,37 +52,39 @@ const formSchema = z.object({
   transaction_type: z.enum(["debit", "credit"]),
   name: z.string().min(3),
   category: z.string(),
+  transaction_at: z.string().datetime(),
 });
 export function AddTransactionForm({ accountId }: { accountId?: string }) {
-  const { data: accounts } = useSuspenseQuery(accountQueryOptions);
+  const { data: accounts } = useAccountQuery();
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      account_id: accountId ?? accounts?.data?.at(0)?.id ?? "",
+      account_id: accountId ?? accounts?.at(0)?.id ?? "",
       // @ts-expect-error this has to be an empty string to show placeholder
       amount: "",
       transaction_type: "debit",
       name: "",
       category: "",
+      transaction_at: new Date().toISOString(),
     },
   });
 
-  const { mutate: addTransaction } = useAddTransactionMutation();
+  const { mutate: addTransaction } = useAddTransactionMutation({
+    onSuccess: () => {
+      form.reset();
+    },
+  });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    addTransaction(values, {
-      onSuccess: () => {
-        form.reset();
-      },
-    });
+    addTransaction(values);
   }
   const transactionType = useWatch({
     control: form.control,
     name: "transaction_type",
   });
 
-  if (!accounts.data?.length) {
+  if (!accounts?.length) {
     toast.error(
       <div>
         <h2>No accounts found</h2>
@@ -146,7 +144,7 @@ export function AddTransactionForm({ accountId }: { accountId?: string }) {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {accounts?.data?.map((account) => (
+                  {accounts?.map((account) => (
                     <SelectItem key={account.id} value={account.id}>
                       {account.name} ({account.currency_code})
                     </SelectItem>

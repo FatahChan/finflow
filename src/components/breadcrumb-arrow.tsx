@@ -14,7 +14,7 @@ export const BreadcrumbWithCustomSeparator = React.memo(() => {
   const crumbItems = useMemo(() => {
     return matches.map((match) => ({
       href: match.pathname,
-      label: match.staticData?.crumb ?? match.loaderData,
+      label: match.staticData?.crumb ?? match.loaderData ?? "",
     }));
   }, [matches]);
 
