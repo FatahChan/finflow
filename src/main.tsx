@@ -39,6 +39,7 @@ const router = createRouter({
   routeTree,
   context: {
     queryClient,
+    supabaseClient,
   },
   defaultStaleTime: 0,
   defaultPreload: "intent",
@@ -70,9 +71,6 @@ if (rootElement && !rootElement.innerHTML) {
         client={queryClient}
         persistOptions={{
           persister: idbPersister,
-        }}
-        onSuccess={() => {
-          console.log("QueryClientProvider: onSuccess");
         }}
       >
         <RouterProvider router={router} />

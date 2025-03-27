@@ -2,7 +2,7 @@ import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { Link } from "@tanstack/react-router";
 
-import { useLoginGoogle } from "@/lib/queries";
+import { useLoginGoogle } from "@/hooks/queries";
 
 export default function LoginPage() {
   const { mutate: login } = useLoginGoogle();

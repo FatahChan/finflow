@@ -1,5 +1,5 @@
+import { accountByIdQueryOptions, currencyQueryOptions } from "@/hooks/queries";
 import type { Database } from "@/lib/database.types";
-import { accountByIdQueryOptions, currencyQueryOptions } from "@/lib/queries";
 import { cn } from "@/lib/utils";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";

@@ -11,14 +11,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  accountQueryOptions,
+  useAccountQuery,
   useAddAccountMutation,
+  useCurrencyQuery,
   useDeleteAccountMutation,
-} from "@/lib/queries";
-import { supabaseClient } from "@/lib/supabase";
+} from "@/hooks/queries";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -31,15 +30,15 @@ export const Route = createFileRoute("/_protected/account/")({
 });
 
 function AccountPage() {
-  const { data: accounts } = useSuspenseQuery(accountQueryOptions);
+  const { data: accounts } = useAccountQuery();
   const { mutate: deleteAccount } = useDeleteAccountMutation();
 
   return (
     <>
       <AddAccountForm />
       <ul className="divide-y divide-gray-200 dark:divide-gray-700">
-        {accounts.data?.length === 0 ? <NoData /> : null}
-        {accounts.data?.map((account) => (
+        {accounts?.length === 0 ? <NoData /> : null}
+        {accounts?.map((account) => (
           <li key={account.id} className="flex items-center gap-3 py-4">
             <Button
               variant="link"
@@ -76,10 +75,7 @@ const formSchema = z.object({
 
 function AddAccountForm() {
   const { mutate: addAccount } = useAddAccountMutation();
-  const { data: currencies } = useSuspenseQuery({
-    queryKey: ["currencies"],
-    queryFn: async () => await supabaseClient.from("currency").select(),
-  });
+  const { data: currencies } = useCurrencyQuery();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -121,7 +117,7 @@ function AddAccountForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {currencies?.data?.map((currency) => (
+                  {currencies?.map((currency) => (
                     <SelectItem key={currency.code} value={currency.code}>
                       {currency.code} ({currency.symbol})
                     </SelectItem>

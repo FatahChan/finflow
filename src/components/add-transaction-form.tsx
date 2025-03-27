@@ -15,7 +15,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { accountQueryOptions, useAddTransactionMutation } from "@/lib/queries";
+import {
+  accountQueryOptions,
+  useAddTransactionMutation,
+} from "@/hooks/queries";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";

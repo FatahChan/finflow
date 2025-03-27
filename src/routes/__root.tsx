@@ -1,43 +1,19 @@
 import { GitHubCorner } from "@/components/github-corner";
-import { supabaseClient } from "@/lib/supabase";
-import { type QueryClient, useQueryClient } from "@tanstack/react-query";
+import useAuthStateChange from "@/hooks/useAuthStateChange";
+import type { supabaseClient } from "@/lib/supabase";
+import type { QueryClient } from "@tanstack/react-query";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
-import { useEffect } from "react";
 
-export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
-  {
-    component: RootRoute,
-  },
-);
+export const Route = createRootRouteWithContext<{
+  queryClient: QueryClient;
+  supabaseClient: typeof supabaseClient;
+}>()({
+  component: RootRoute,
+});
 
 function RootRoute() {
-  const queryClient = useQueryClient();
-  useEffect(() => {
-    let sub: { unsubscribe: () => void } | null = null;
-    supabaseClient.auth.getSession().then((res) => {
-      if (!res.data.session) {
-        return;
-      }
-      sub = supabaseClient
-        .channel("schema-changes")
-        .on(
-          "postgres_changes",
-          {
-            event: "*",
-            schema: "public",
-          },
-          (payload) => {
-            console.log(payload.table);
-            queryClient.invalidateQueries({ queryKey: [payload.table] });
-          },
-        )
-        .subscribe();
-    });
-    return () => {
-      sub?.unsubscribe();
-    };
-  }, [queryClient]);
+  useAuthStateChange();
 
   return (
     <>
