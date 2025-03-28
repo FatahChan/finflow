@@ -16,6 +16,7 @@ function useAuthStateChange() {
     try {
       supabaseClient.auth.getSession().then((res) => {
         if (res.data.session) {
+          console.log(res.data.session);
           sessionStore$.set(res.data.session);
           navigate({ to: "/account" });
         }
