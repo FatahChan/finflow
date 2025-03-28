@@ -1,0 +1,7 @@
+{
+  "$schema": "https://vercel.com/schemas/project-config.json",
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}

@@ -71,7 +71,7 @@
     "web-vitals": "^4.2.4"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,html,css,json}": [
+    "*.{js,jsx,ts,tsx,html,css}": [
       "pnpm check"
     ],
     "*.{ts,tsx}": [
