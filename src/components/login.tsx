@@ -8,7 +8,7 @@ export default function LoginPage() {
   const { mutate: login } = useLoginGoogle();
 
   const handleGoogleLogin = () => {
-    login(undefined, {});
+    login();
   };
 
   return (

@@ -9,7 +9,6 @@ import {
 } from "@/lib/SupaLegend";
 import type { RequiredFields } from "@/lib/type-util";
 import { use$ } from "@legendapp/state/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 import { toast } from "sonner";
@@ -176,38 +175,31 @@ export const useDeleteTransactionMutation = () => {
 };
 
 export const useLoginGoogle = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async () => {
-      const { data, error } = await supabaseClient.auth.signInWithOAuth({
+  const mutate = useCallback(() => {
+    supabaseClient.auth
+      .signInWithOAuth({
         provider: "google",
+      })
+      .then((res) => {
+        if (res.error) {
+          toast.error(res.error.message);
+          return;
+        }
+        window.location.href = res.data.url;
       });
-      console.log(data, error);
-      if (error) throw new Error(error.message);
-      return data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  }, []);
+  return { mutate };
 };
 
 export const useLogout = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: async () => {
-      const { error } = await supabaseClient.auth.signOut();
-      if (error) throw new Error(error.message);
-      return true;
-    },
-    onSuccess: () => {
-      queryClient.removeQueries();
-    },
-    onError: (error) => {
-      toast.error(error.message);
-    },
-  });
+  const mutate = useCallback(() => {
+    supabaseClient.auth.signOut().then((res) => {
+      if (res.error) {
+        toast.error(res.error.message);
+        return;
+      }
+      window.location.href = "/";
+    });
+  }, []);
+  return { mutate };
 };
