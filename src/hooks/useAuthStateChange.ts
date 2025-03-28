@@ -2,6 +2,7 @@ import { account$, sessionStore$, transaction$ } from "@/lib/SupaLegend";
 import { supabaseClient } from "@/lib/supabase";
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { toast } from "sonner";
 
 const EVENT_TO_LISTEN_TO = [
   "SIGNED_IN",
@@ -12,6 +13,16 @@ const EVENT_TO_LISTEN_TO = [
 function useAuthStateChange() {
   const navigate = useNavigate();
   useEffect(() => {
+    try {
+      supabaseClient.auth.getSession().then((res) => {
+        if (res.data.session) {
+          sessionStore$.set(res.data.session);
+          navigate({ to: "/account" });
+        }
+      });
+    } catch {
+      toast.error("Failed to get session");
+    }
     const {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange((event, session) => {
