@@ -2,12 +2,10 @@ import { GitHubCorner } from "@/components/github-corner";
 import HamburgerMenu from "@/components/hamburger-menu";
 import useAuthStateChange from "@/hooks/useAuthStateChange";
 import type { supabaseClient } from "@/lib/supabase";
-import type { QueryClient } from "@tanstack/react-query";
 import { Outlet, createRootRouteWithContext } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools";
 
 export const Route = createRootRouteWithContext<{
-  queryClient: QueryClient;
   supabaseClient: typeof supabaseClient;
 }>()({
   component: RootRoute,

@@ -6,39 +6,14 @@ import ReactDOM from "react-dom/client";
 // Import the generated route tree
 import { routeTree } from "./routeTree.gen";
 
-import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { createIDBPersister } from "./lib/react-query-persistor.ts";
 import { supabaseClient } from "./lib/supabase.ts";
 import reportWebVitals from "./reportWebVitals.ts";
 import "./styles.css";
-
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      gcTime: 1000 * 60 * 60 * 24 * 24, // 24 days
-      staleTime: 1000 * 60 * 60 * 24, // 24 hours
-      retry: 0,
-    },
-  },
-});
-
-const idbPersister = createIDBPersister();
-
-// we need a default mutation function so that paused mutations can resume after a page reload
-queryClient.setMutationDefaults(["account"], {
-  mutationFn: async () => {
-    // to avoid clashes with our optimistic update when an offline mutation continues
-    await queryClient.cancelQueries({ queryKey: ["account"] });
-    return supabaseClient.from("account").update({});
-  },
-});
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
   context: {
-    queryClient,
     supabaseClient,
   },
   defaultStaleTime: 0,
@@ -67,15 +42,8 @@ if (rootElement && !rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <PersistQueryClientProvider
-        client={queryClient}
-        persistOptions={{
-          persister: idbPersister,
-        }}
-      >
-        <RouterProvider router={router} />
-        <Toaster />
-      </PersistQueryClientProvider>
+      <RouterProvider router={router} />
+      <Toaster />
     </StrictMode>,
   );
 }
