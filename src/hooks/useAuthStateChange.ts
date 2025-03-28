@@ -35,6 +35,7 @@ function useAuthStateChange() {
         navigate({ to: "/login" });
         return;
       }
+      if (!session) return;
       sessionStore$.set(session);
     });
     return () => {
