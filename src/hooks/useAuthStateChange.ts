@@ -15,6 +15,7 @@ function useAuthStateChange() {
     const {
       data: { subscription },
     } = supabaseClient.auth.onAuthStateChange((event, session) => {
+      console.log(event, session);
       if (!EVENT_TO_LISTEN_TO.includes(event)) return;
       if (event === "SIGNED_OUT") {
         sessionStore$.delete();
