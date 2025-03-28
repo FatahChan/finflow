@@ -9,6 +9,7 @@ export const Route = createFileRoute("/login")({
       if (res.data.session) {
         throw redirect({
           to: "/account",
+          replace: true,
         });
       }
     });
