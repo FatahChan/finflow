@@ -14,7 +14,6 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
 import { Route as ProtectedImport } from './routes/_protected'
 import { Route as ProtectedIndexImport } from './routes/_protected/index'
-import { Route as ProtectedTransactionImport } from './routes/_protected/transaction'
 import { Route as ProtectedAccountIndexImport } from './routes/_protected/account.index'
 import { Route as ProtectedAccountIdIndexImport } from './routes/_protected/account.$id.index'
 import { Route as ProtectedAccountIdTransactionImport } from './routes/_protected/account.$id.transaction'
@@ -35,12 +34,6 @@ const ProtectedRoute = ProtectedImport.update({
 const ProtectedIndexRoute = ProtectedIndexImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => ProtectedRoute,
-} as any)
-
-const ProtectedTransactionRoute = ProtectedTransactionImport.update({
-  id: '/transaction',
-  path: '/transaction',
   getParentRoute: () => ProtectedRoute,
 } as any)
 
@@ -81,13 +74,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/_protected/transaction': {
-      id: '/_protected/transaction'
-      path: '/transaction'
-      fullPath: '/transaction'
-      preLoaderRoute: typeof ProtectedTransactionImport
-      parentRoute: typeof ProtectedImport
-    }
     '/_protected/': {
       id: '/_protected/'
       path: '/'
@@ -122,7 +108,6 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface ProtectedRouteChildren {
-  ProtectedTransactionRoute: typeof ProtectedTransactionRoute
   ProtectedIndexRoute: typeof ProtectedIndexRoute
   ProtectedAccountIndexRoute: typeof ProtectedAccountIndexRoute
   ProtectedAccountIdTransactionRoute: typeof ProtectedAccountIdTransactionRoute
@@ -130,7 +115,6 @@ interface ProtectedRouteChildren {
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedTransactionRoute: ProtectedTransactionRoute,
   ProtectedIndexRoute: ProtectedIndexRoute,
   ProtectedAccountIndexRoute: ProtectedAccountIndexRoute,
   ProtectedAccountIdTransactionRoute: ProtectedAccountIdTransactionRoute,
@@ -144,7 +128,6 @@ const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '': typeof ProtectedRouteWithChildren
   '/login': typeof LoginRoute
-  '/transaction': typeof ProtectedTransactionRoute
   '/': typeof ProtectedIndexRoute
   '/account': typeof ProtectedAccountIndexRoute
   '/account/$id/transaction': typeof ProtectedAccountIdTransactionRoute
@@ -153,7 +136,6 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/login': typeof LoginRoute
-  '/transaction': typeof ProtectedTransactionRoute
   '/': typeof ProtectedIndexRoute
   '/account': typeof ProtectedAccountIndexRoute
   '/account/$id/transaction': typeof ProtectedAccountIdTransactionRoute
@@ -164,7 +146,6 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_protected': typeof ProtectedRouteWithChildren
   '/login': typeof LoginRoute
-  '/_protected/transaction': typeof ProtectedTransactionRoute
   '/_protected/': typeof ProtectedIndexRoute
   '/_protected/account/': typeof ProtectedAccountIndexRoute
   '/_protected/account/$id/transaction': typeof ProtectedAccountIdTransactionRoute
@@ -176,24 +157,16 @@ export interface FileRouteTypes {
   fullPaths:
     | ''
     | '/login'
-    | '/transaction'
     | '/'
     | '/account'
     | '/account/$id/transaction'
     | '/account/$id'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/login'
-    | '/transaction'
-    | '/'
-    | '/account'
-    | '/account/$id/transaction'
-    | '/account/$id'
+  to: '/login' | '/' | '/account' | '/account/$id/transaction' | '/account/$id'
   id:
     | '__root__'
     | '/_protected'
     | '/login'
-    | '/_protected/transaction'
     | '/_protected/'
     | '/_protected/account/'
     | '/_protected/account/$id/transaction'
@@ -228,7 +201,6 @@ export const routeTree = rootRoute
     "/_protected": {
       "filePath": "_protected.tsx",
       "children": [
-        "/_protected/transaction",
         "/_protected/",
         "/_protected/account/",
         "/_protected/account/$id/transaction",
@@ -237,10 +209,6 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
-    },
-    "/_protected/transaction": {
-      "filePath": "_protected/transaction.tsx",
-      "parent": "/_protected"
     },
     "/_protected/": {
       "filePath": "_protected/index.tsx",

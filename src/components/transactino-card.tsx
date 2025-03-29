@@ -1,22 +1,16 @@
-import { useAccountByIdQuery, useCurrencyQuery } from "@/hooks/queries";
+import { useAccountByIdQuery } from "@/hooks/queries";
 import type { Database } from "@/lib/database.types";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { ArrowDownRight, ArrowUpRight } from "lucide-react";
-import { useMemo } from "react";
 import { Card, CardContent, CardHeader } from "./ui/card";
 
 export function TransactionCard({
   transaction,
 }: { transaction: Database["public"]["Tables"]["transaction"]["Row"] }) {
   const { amount, transaction_type, account_id, name } = transaction;
-  const { data: account } = useAccountByIdQuery(account_id);
-  const { data: currency } = useCurrencyQuery();
-  const currencySymbol = useMemo(
-    () =>
-      currency?.find((c) => c.code === account?.currency_code)?.symbol || "",
-    [currency, account?.currency_code],
-  );
+  const { data: account, isPending } = useAccountByIdQuery(account_id);
 
+  if (isPending) return null;
   return (
     <Card className="gap-2 overflow-hidden py-2">
       <CardHeader className="flex items-center px-2">
@@ -39,7 +33,7 @@ export function TransactionCard({
             transaction_type === "credit" ? "text-green-600" : "text-red-600",
           )}
         >
-          {amount} {currencySymbol}
+          {formatCurrency(amount, account?.currency_code || "")}
         </div>
       </CardHeader>
       <CardContent className="flex items-center justify-center px-2">

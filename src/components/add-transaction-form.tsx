@@ -17,10 +17,12 @@ import {
 } from "@/components/ui/select";
 import { useAccountQuery, useAddTransactionMutation } from "@/hooks/queries";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useNavigate } from "@tanstack/react-router";
-import { useForm, useWatch } from "react-hook-form";
+import { useNavigate, useParams } from "@tanstack/react-router";
+import { useEffect } from "react";
+import { useForm, useFormContext, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { DateTimePicker24h } from "./ui/date-time-picker-24h";
 
 const expenseCategories = [
   "Food",
@@ -50,12 +52,17 @@ const formSchema = z.object({
     .regex(/^[0-9]*\.?[0-9]{0,2}$/, "Invalid amount")
     .transform((value) => Number.parseFloat(value)),
   transaction_type: z.enum(["debit", "credit"]),
-  name: z.string().min(3),
-  category: z.string(),
+  name: z.string().min(3, "Name must be at least 3 characters long"),
+  category: z.string().min(3, "Category must be at least 3 characters long"),
   transaction_at: z.string().datetime(),
 });
-export function AddTransactionForm({ accountId }: { accountId?: string }) {
-  const { data: accounts } = useAccountQuery();
+
+export function AddTransactionForm() {
+  const { id: accountId } = useParams({
+    from: "/_protected/account/$id/transaction",
+  });
+
+  const { data: accounts, isPending } = useAccountQuery();
   const navigate = useNavigate();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -79,12 +86,12 @@ export function AddTransactionForm({ accountId }: { accountId?: string }) {
   function onSubmit(values: z.infer<typeof formSchema>) {
     addTransaction(values);
   }
-  const transactionType = useWatch({
-    control: form.control,
-    name: "transaction_type",
-  });
 
-  if (!accounts?.length) {
+  useEffect(() => {
+    if (isPending) return;
+    if (!accounts?.length) return;
+    if (accounts.length > 0) return;
+
     toast.error(
       <div>
         <h2>No accounts found</h2>
@@ -103,8 +110,7 @@ export function AddTransactionForm({ accountId }: { accountId?: string }) {
         duration: 5000,
       },
     );
-    return null;
-  }
+  }, [accounts?.length, navigate, isPending]);
 
   return (
     <Form {...form}>
@@ -202,26 +208,17 @@ export function AddTransactionForm({ accountId }: { accountId?: string }) {
             </FormItem>
           )}
         />
+        <CategoryFormItem />
         <FormField
           control={form.control}
-          name="category"
+          name="transaction_at"
           render={({ field }) => (
             <FormItem className="col-span-2">
               <FormControl>
-                <AutoComplete
-                  selectedValue={field.value}
-                  onSelectedValueChange={field.onChange}
-                  searchValue={field.value}
-                  onSearchValueChange={field.onChange}
-                  items={(transactionType === "debit"
-                    ? expenseCategories
-                    : incomeCategories
-                  ).map((category) => ({
-                    value: category,
-                    label: category,
-                  }))}
-                  isLoading={false}
-                  placeholder="Enter category"
+                <DateTimePicker24h
+                  value={field.value}
+                  onChange={field.onChange}
+                  toISOString={true}
                 />
               </FormControl>
               <FormMessage />
@@ -234,5 +231,43 @@ export function AddTransactionForm({ accountId }: { accountId?: string }) {
         </Button>
       </form>
     </Form>
+  );
+}
+
+function CategoryFormItem() {
+  const form = useFormContext(); // retrieve those props
+
+  const transactionType = useWatch({
+    control: form.control,
+    name: "transaction_type",
+  });
+
+  return (
+    <FormField
+      control={form.control}
+      name="category"
+      render={({ field }) => (
+        <FormItem className="col-span-2">
+          <FormControl>
+            <AutoComplete
+              selectedValue={field.value}
+              onSelectedValueChange={field.onChange}
+              searchValue={field.value}
+              onSearchValueChange={field.onChange}
+              items={(transactionType === "debit"
+                ? expenseCategories
+                : incomeCategories
+              ).map((category) => ({
+                value: category,
+                label: category,
+              }))}
+              isLoading={false}
+              placeholder="Enter category"
+            />
+          </FormControl>
+          <FormMessage />
+        </FormItem>
+      )}
+    />
   );
 }

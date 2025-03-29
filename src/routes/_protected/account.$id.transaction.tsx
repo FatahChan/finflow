@@ -39,7 +39,7 @@ function RouteComponent() {
           </CardHeader>
           <CardContent className="p-0">
             <CollapsibleContent>
-              <AddTransactionForm accountId={params.id} />
+              <AddTransactionForm />
             </CollapsibleContent>
           </CardContent>
         </Collapsible>

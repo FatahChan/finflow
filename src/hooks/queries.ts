@@ -8,62 +8,93 @@ import {
   transaction$,
 } from "@/lib/SupaLegend";
 import type { RequiredFields } from "@/lib/type-util";
+import { syncState, when } from "@legendapp/state";
 import { use$ } from "@legendapp/state/react";
+import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { toast } from "sonner";
 import type { Database } from "../lib/database.types";
 import { supabaseClient } from "../lib/supabase";
 
 export const useAccountQuery = () => {
-  const data = use$(() => {
-    return Object.values(account$.get() ?? {});
+  const syncState$ = syncState(account$);
+  const account = use$(account$);
+  return useQuery({
+    queryKey: ["account", account],
+    queryFn: async () => {
+      await when(syncState$.isPersistLoaded);
+      return Object.values(account$.get() ?? {});
+    },
   });
-  return { data };
 };
 
 export const useCurrencyQuery = () => {
-  const data = use$(() => {
-    return Object.values(currency$.get() ?? {});
+  const syncState$ = syncState(currency$);
+  const currency = use$(currency$);
+  return useQuery({
+    queryKey: ["currency", currency],
+    queryFn: async () => {
+      await when(syncState$.isPersistLoaded);
+      return Object.values(currency$.get() ?? {});
+    },
   });
-  return { data };
 };
 
 export const useTransactionQuery = () => {
-  const data = use$(() => {
-    return Object.values(transaction$.get() ?? {});
+  const syncState$ = syncState(transaction$);
+  const transaction = use$(transaction$);
+  return useQuery({
+    queryKey: ["transaction", transaction],
+    queryFn: async () => {
+      await when(syncState$.isPersistLoaded);
+      return Object.values(transaction$.get() ?? {});
+    },
   });
-  return { data };
 };
 
 export const useAccountByIdQuery = (id: string) => {
-  const data = use$(() => {
-    return account$.get()[id];
+  const syncState$ = syncState(account$);
+  const account = use$(account$[id]);
+  return useQuery({
+    queryKey: ["account", id, account],
+    queryFn: async () => {
+      await when(syncState$.isPersistLoaded);
+      return account$.get()[id];
+    },
   });
-  return { data };
 };
 export const useCurrencyByCodeQuery = (code: string) => {
-  const data = use$(() => {
-    return currency$.get()[code];
+  const syncState$ = syncState(currency$[code]);
+  const currency = use$(currency$[code]);
+  return useQuery({
+    queryKey: ["currency", code, currency],
+    queryFn: async () => {
+      await when(syncState$.isPersistLoaded);
+      return currency$.get()[code];
+    },
   });
-  return { data };
 };
 
 export const useTransactionByIdQuery = (id: string) => {
-  const data = use$(() => {
-    return transaction$.get()[id];
+  const syncState$ = syncState(transaction$[id]);
+  const transaction = use$(transaction$[id]);
+  return useQuery({
+    queryKey: ["transaction", id, transaction],
+    queryFn: async () => {
+      await when(syncState$.isPersistLoaded);
+      return transaction$.get()[id];
+    },
   });
-  return { data };
 };
 
 export const useTransactionByAccountIdQuery = (accountId: string) => {
-  const data = use$(() => {
-    const transactionsMap = transaction$.get();
-    return Object.values(transactionsMap ?? {}).filter(
-      (transaction) => transaction.account_id === accountId,
-    );
-  });
-  return { data };
+  const { data: transactions, ...rest } = useTransactionQuery();
+  const data = useMemo(() => {
+    if (!transactions) return [];
+    return transactions.filter((t) => t.account_id === accountId);
+  }, [transactions, accountId]);
+  return { data, ...rest };
 };
 
 const getMetaFields = () => {
@@ -137,7 +168,7 @@ export const useAddTransactionMutation = ({
           "category" | "transaction_at" | "transaction_type"
         >,
     ) => {
-      const { id, ...rest } = getMetaFields();
+      const { id, user_id: _, ...rest } = getMetaFields();
       transaction$[id].set({
         ...transaction,
         id,

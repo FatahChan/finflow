@@ -1,5 +1,6 @@
 import { useLogout } from "@/hooks/queries";
 import { cn } from "@/lib/utils";
+import { Link } from "@tanstack/react-router";
 import { AlignJustify, X } from "lucide-react";
 import { useState } from "react";
 import { Button } from "./ui/button";
@@ -22,11 +23,16 @@ function HamburgerMenu({ className }: { className?: string }) {
           {open ? <X /> : <AlignJustify />}
         </Button>
       </SheetTrigger>
-      <SheetContent side="left">
-        <SheetHeader>
+      <SheetContent side="left" className="gap-2 p-4">
+        <SheetHeader className="p-0">
           <SheetTitle>Navigation</SheetTitle>
         </SheetHeader>
-        <nav className="flex flex-grow flex-col gap-2 p-4">
+        <nav className="flex flex-grow flex-col">
+          <ul>
+            <li>
+              <Link to="/account">Accounts</Link>
+            </li>
+          </ul>
           <Button onClick={() => logout()} className="mt-auto">
             Logout
           </Button>
