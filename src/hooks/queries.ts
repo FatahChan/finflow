@@ -181,7 +181,7 @@ export const useLoginGoogle = () => {
         .signInWithOAuth({
           provider: "google",
           options: {
-            redirectTo: window.location.href,
+            redirectTo: window.location.origin,
           },
         })
         .then((res) => {
