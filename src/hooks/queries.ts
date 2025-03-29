@@ -180,6 +180,9 @@ export const useLoginGoogle = () => {
       supabaseClient.auth
         .signInWithOAuth({
           provider: "google",
+          options: {
+            redirectTo: window.location.href,
+          },
         })
         .then((res) => {
           if (res.error) {
