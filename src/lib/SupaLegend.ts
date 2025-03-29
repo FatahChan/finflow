@@ -38,6 +38,7 @@ export const transaction$ = observable(
       infinite: true, // Retry changes with exponential backoff
     },
     changesSince: "last-sync",
+    fieldDeleted: "deleted",
   }),
 );
 
@@ -62,6 +63,7 @@ export const account$ = observable(
       infinite: true, // Retry changes with exponential backoff
     },
     changesSince: "last-sync",
+    fieldDeleted: "deleted",
   }),
 );
 
@@ -86,6 +88,7 @@ export const currency$ = observable(
     retry: {
       infinite: true, // Retry changes with exponential backoff
     },
+    fieldDeleted: "deleted",
   }),
 );
 
