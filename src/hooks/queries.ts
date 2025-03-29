@@ -175,19 +175,19 @@ export const useDeleteTransactionMutation = () => {
 };
 
 export const useLoginGoogle = () => {
-  const mutate = useCallback(() => {
-    supabaseClient.auth
-      .signInWithOAuth({
-        provider: "google",
-      })
-      .then((res) => {
-        if (res.error) {
-          toast.error(res.error.message);
-          return;
-        }
-        window.location.href = res.data.url;
-      });
-  }, []);
+  const mutate = useCallback(
+    () =>
+      supabaseClient.auth
+        .signInWithOAuth({
+          provider: "google",
+        })
+        .then((res) => {
+          if (res.error) {
+            toast.error(res.error.message);
+          }
+        }),
+    [],
+  );
   return { mutate };
 };
 

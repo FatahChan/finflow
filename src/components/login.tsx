@@ -1,23 +1,19 @@
 import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
-import { Link } from "@tanstack/react-router";
 
 import { useLoginGoogle } from "@/hooks/queries";
+import { supabaseClient } from "@/lib/supabase";
 
 export default function LoginPage() {
-  const { mutate: login } = useLoginGoogle();
-
-  const handleGoogleLogin = () => {
-    login();
-  };
+  useLoginGoogle();
 
   return (
     <div className="m-auto h-fit w-full max-w-sm overflow-hidden rounded-[calc(var(--radius)+.125rem)] border bg-muted shadow-md shadow-zinc-950/5 dark:[--color-muted:var(--color-zinc-900)]">
       <div className="-m-px rounded-[calc(var(--radius)+.125rem)] border bg-card p-8 pb-6">
         <div className="text-center">
-          <Link to="/" aria-label="go home" className="mx-auto block w-fit">
-            <Logo />
-          </Link>
+          {/* <Link to="/" aria-label="go home" className="mx-auto block w-fit"> */}
+          <Logo />
+          {/* </Link> */}
           <h1 className="mt-4 mb-1 font-semibold text-xl">
             Sign In to Finflow
           </h1>
@@ -28,7 +24,11 @@ export default function LoginPage() {
             type="button"
             variant="outline"
             className="col-span-2"
-            onClick={handleGoogleLogin}
+            onClick={() =>
+              supabaseClient.auth.signInWithOAuth({
+                provider: "google",
+              })
+            }
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
