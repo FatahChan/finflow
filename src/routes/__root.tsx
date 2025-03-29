@@ -18,7 +18,7 @@ function RootRoute() {
 
   return (
     <>
-      <div className="min-h-screen bg-gradient-to-br from-[#6B46C1] from-opacity-95 via-opacity-100 via-primary to-[#00d4ff] to-opacity-70">
+      <div className="min-h-screen bg-gradient-to-br bg-primary from-[#6B46C1] from-opacity-95 via-opacity-100 via-primary to-[#00d4ff] to-opacity-70">
         <a
           href="https://github.com/FatahChan/finflow"
           className="github-corner"
@@ -33,7 +33,7 @@ function RootRoute() {
           <h1 className="mb-6 text-center font-semibold text-3xl text-white">
             FinFlow
           </h1>
-          <div className="mx-auto w-xs rounded-lg bg-white/90 shadow-md backdrop-blur-sm dark:bg-gray-900/90">
+          <div className="mx-auto w-xs rounded-lg bg-primary-foreground shadow-md backdrop-blur-sm dark:bg-gray-900/90">
             <Outlet />
           </div>
           <TanStackRouterDevtools />
