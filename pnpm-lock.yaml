@@ -4,11 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  '@tailwindcss/vite':
-    hash: cb1786e95a77ef99ba2c97b59289672a6f31eabeb9bd5b19ce53fab0174aab4b
-    path: patches/@tailwindcss__vite.patch
-
 importers:
 
   .:
@@ -54,7 +49,7 @@ importers:
         version: 4.0.17
       '@tailwindcss/vite':
         specifier: ^4.0.6
-        version: 4.0.14(patch_hash=cb1786e95a77ef99ba2c97b59289672a6f31eabeb9bd5b19ce53fab0174aab4b)(vite@6.2.2(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
+        version: 4.0.14(vite@6.2.2(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))
       '@tanstack/query-sync-storage-persister':
         specifier: ^5.69.0
         version: 5.69.0
@@ -6009,7 +6004,7 @@ snapshots:
       postcss: 8.5.3
       tailwindcss: 4.0.17
 
-  '@tailwindcss/vite@4.0.14(patch_hash=cb1786e95a77ef99ba2c97b59289672a6f31eabeb9bd5b19ce53fab0174aab4b)(vite@6.2.2(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))':
+  '@tailwindcss/vite@4.0.14(vite@6.2.2(@types/node@22.13.10)(jiti@2.4.2)(lightningcss@1.29.3)(terser@5.39.0)(tsx@4.19.3)(yaml@2.7.0))':
     dependencies:
       '@tailwindcss/node': 4.0.14
       '@tailwindcss/oxide': 4.0.14
