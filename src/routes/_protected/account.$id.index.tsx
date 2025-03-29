@@ -5,7 +5,7 @@ import {
   useDeleteAccountMutation,
   useTransactionByAccountIdQuery,
 } from "@/hooks/queries";
-import { cn, formatCurrency } from "@/lib/utils";
+import { formatCurrency } from "@/lib/utils";
 import { Link, createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Trash2 } from "lucide-react";
 import { useMemo } from "react";
@@ -41,7 +41,7 @@ function AccountDetailsPage() {
         ?.filter((t) => t.transaction_type === "debit")
         .reduce((acc, t) => acc + Number(t.amount), 0) ?? 0;
 
-    const balance = totalCredit + totalDebit;
+    const balance = totalCredit - totalDebit;
 
     return { totalCredit, totalDebit, balance };
   }, [transactions]);
@@ -78,11 +78,7 @@ function AccountDetailsPage() {
           <CardDescription className="space-y-2">
             <div className="flex items-center justify-between">
               <span>Balance</span>
-              <span
-                className={cn(balance >= 0 ? "text-green-600" : "text-red-600")}
-              >
-                {formatCurrency(balance, account.currency_code)}
-              </span>
+              <span>{formatCurrency(balance, account.currency_code)}</span>
             </div>
             <div className="flex items-center justify-between">
               <span>Total Credit</span>
