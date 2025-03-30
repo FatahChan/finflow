@@ -202,7 +202,7 @@ export function AddTransactionForm() {
                 value={field.value}
                 placeholder="Enter amount"
                 inputMode="numeric"
-                pattern="[0-9]*"
+                pattern="[0-9]*\.[0-9]{0,2}"
               />
               <FormMessage />
             </FormItem>
