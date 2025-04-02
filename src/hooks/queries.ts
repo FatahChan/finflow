@@ -6,6 +6,7 @@ import {
   generateId,
   sessionStore$,
   transaction$,
+  usdExchangeRate$,
 } from "@/lib/SupaLegend";
 import type { RequiredFields } from "@/lib/type-util";
 import { syncState, when } from "@legendapp/state";
@@ -203,6 +204,62 @@ export const useDeleteTransactionMutation = () => {
     toast.success("Transaction deleted successfully");
   }, []);
   return { mutate };
+};
+
+export const useBalance = () => {
+  const { data: transactions } = useTransactionQuery();
+  const balance = useMemo(() => {
+    if (!transactions) return undefined;
+    return transactions.reduce(
+      (acc, t) => {
+        acc[t.account_id] = acc[t.account_id] ?? 0;
+        acc[t.account_id] += Number(t.amount);
+        return acc;
+      },
+      {} as {
+        [key: string]: number;
+      },
+    );
+  }, [transactions]);
+  return balance;
+};
+export const useUsdExchangeRate = () => {
+  const { isLoaded } = syncState(usdExchangeRate$);
+  return { isPending: isLoaded.get(), data: use$(usdExchangeRate$) };
+};
+
+export const useEstTotalBalance = () => {
+  const { data: accounts, isPending: isPendingAccounts } = useAccountQuery();
+  const { data: usdExchangeRate, isPending: isPendingUsdExchangeRate } =
+    useUsdExchangeRate();
+  const balanceGroupedByAccountId = useBalance();
+  const totalBalanceInUsd = useMemo(() => {
+    if (!balanceGroupedByAccountId || !usdExchangeRate || !accounts)
+      return undefined;
+    return Object.entries(balanceGroupedByAccountId).reduce(
+      (acc, [accountId, balance]) => {
+        const account = accounts.find((a) => a.id === accountId);
+        if (!account) return acc;
+        const lowerCaseCurrencyCode =
+          account.currency_code.toLowerCase() as keyof typeof usdExchangeRate.usd;
+        return acc + balance / usdExchangeRate.usd[lowerCaseCurrencyCode];
+      },
+      0,
+    );
+  }, [balanceGroupedByAccountId, usdExchangeRate, accounts]);
+  return {
+    isPending: isPendingAccounts || isPendingUsdExchangeRate,
+    data: totalBalanceInUsd,
+  };
+};
+
+export const useBalanceByAccountId = (accountId: string) => {
+  const { data: transactions } = useTransactionByAccountIdQuery(accountId);
+  const balance = useMemo(() => {
+    if (!transactions) return undefined;
+    return transactions.reduce((acc, t) => acc + Number(t.amount), 0);
+  }, [transactions]);
+  return balance;
 };
 
 export const useLoginGoogle = () => {
