@@ -3,6 +3,6 @@ export default {
     "@tailwindcss/postcss": {},
     "@csstools/postcss-oklab-function": {},
     "autoprefixer": {},
-    "postcss-at-property-fallback": {},
+    // "postcss-at-property-fallback": {},
   }
 }
