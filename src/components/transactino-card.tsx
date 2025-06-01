@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader } from "./ui/card";
 export function TransactionCard({
   transaction,
 }: { transaction: Database["public"]["Tables"]["transaction"]["Row"] }) {
-  const { amount, transaction_type, account_id, name } = transaction;
+  const { amount, transaction_type, account_id, name, category, created_at } =
+    transaction;
   const { data: account, isPending } = useAccountByIdQuery(account_id);
 
   if (isPending) return null;
@@ -39,7 +40,8 @@ export function TransactionCard({
       <CardContent className="flex items-center justify-center px-2">
         <div className="flex-1">
           <div className="flex items-center gap-2 text-muted-foreground text-xs">
-            <span>{"Category"}</span>|<span>{"Date"}</span>|
+            <span>{category}</span>|
+            <span>{new Date(created_at).toLocaleDateString("en-GB")}</span>|
             <span>
               {account?.name} ({account?.currency_code})
             </span>
