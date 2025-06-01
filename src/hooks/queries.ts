@@ -49,7 +49,11 @@ export const useTransactionQuery = () => {
     queryKey: ["transaction", transaction],
     queryFn: async () => {
       await when(syncState$.isPersistLoaded);
-      return Object.values(transaction$.get() ?? {});
+      return Object.values(transaction$.get() ?? {}).sort((a, b) => {
+        return (
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+      });
     },
   });
 };

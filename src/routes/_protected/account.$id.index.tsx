@@ -11,6 +11,17 @@ import { Trash2 } from "lucide-react";
 import { useMemo } from "react";
 
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   Card,
   CardDescription,
   CardFooter,
@@ -66,14 +77,33 @@ function AccountDetailsPage() {
             <span>
               {account.name} ({account.currency_code})
             </span>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleDelete}
-              className="text-destructive hover:bg-destructive/10"
-            >
-              <Trash2 className="h-5 w-5" />
-            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger className="text-destructive hover:bg-destructive/10">
+                <Trash2 className="h-5 w-5" />
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    your account and remove your data from our servers.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleDelete}
+                      className="text-destructive hover:bg-destructive/10"
+                    >
+                      Delete
+                    </Button>
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </CardTitle>
           <CardDescription className="space-y-2">
             <div className="flex items-center justify-between">
