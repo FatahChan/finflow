@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_protected/")({
 });
 
 import { useState, useEffect } from "react";
-import { Plus, Wallet, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Money } from "@/components/ui/money";
@@ -86,52 +86,6 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Accounts Overview */}
-      <div className="px-4 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-foreground">Accounts</h2>
-          <Link to="/accounts">
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-1" />
-              Add Account
-            </Button>
-          </Link>
-        </div>
-
-        {accounts.length === 0 ? (
-          <Card>
-            <CardContent className="pt-6 text-center">
-              <Wallet className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <p className="text-muted-foreground mb-4">No accounts yet</p>
-              <Link to="/accounts">
-                <Button>Create Your First Account</Button>
-              </Link>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="space-y-3">
-            {accounts.map((account) => (
-              <Card key={account.id}>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-medium text-foreground mb-1">
-                        {account.name}
-                      </h3>
-                      <Money
-                        amount={calculateAccountBalance(account.id)}
-                        currency={account.currency}
-                        positive={calculateAccountBalance(account.id) >= 0}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        )}
       </div>
 
       {/* Recent Transactions */}
