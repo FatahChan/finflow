@@ -25,15 +25,18 @@ export const getAccountById = createServerFn()
     }
     return data as TransactionAccountInsert & { id: string };
   })
-  .handler(async ({ data: { id } }) => {
+  .handler(async ({ data: { id }, context: { user } }) => {
     return await db
       .select()
       .from(transactionAccount)
-      .where(and(eq(transactionAccount.id, id), eq(transactionAccount.userId, id)));
+      .where(and(eq(transactionAccount.id, id), eq(transactionAccount.userId, user.id)));
   });
 
-export const getAccounts = createServerFn().handler(async () => {
+export const getAccounts = createServerFn()
+  .middleware([authMiddleware])
+  .handler(async ({context:{user}}) => {
   const accounts = await db.query.transactionAccount.findMany({
+    where: (account, { eq }) => eq(account.userId, user.id),
     orderBy: (account, { desc }) => [desc(account.createdAt)],
   });
   return accounts;
@@ -47,11 +50,11 @@ export const updateAccount = createServerFn()
     }
     return data as TransactionAccountInsert & { id: string };
   })
-  .handler(async ({ data: { name, currency, id } }) => {
+  .handler(async ({ data: { name, currency, id }, context: { user } }) => {
     const updatedAccount = await db
       .update(transactionAccount)
       .set({ name, currency })
-      .where(and(eq(transactionAccount.id, id), eq(transactionAccount.userId, id)));
+      .where(and(eq(transactionAccount.id, id), eq(transactionAccount.userId, user.id)));
     return updatedAccount;
   });
 
@@ -63,9 +66,9 @@ export const deleteAccount = createServerFn()
     }
     return data as TransactionAccountInsert & { id: string };
   })
-  .handler(async ({ data: { id } }) => {
+  .handler(async ({ data: { id }, context: { user } }) => {
     const deletedAccount = await db
       .delete(transactionAccount)
-      .where(and(eq(transactionAccount.id, id), eq(transactionAccount.userId, id)));
+      .where(and(eq(transactionAccount.id, id), eq(transactionAccount.userId, user.id)));
     return deletedAccount;
   });
