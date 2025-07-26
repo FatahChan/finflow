@@ -1,7 +1,7 @@
-import type { account, transaction } from "./schema";
+import type { transactionAccount, transaction } from "./schema";
 
-export type AccountInsert = typeof account.$inferInsert;
-export type AccountSelect = typeof account.$inferSelect;
+export type TransactionAccountInsert = typeof transactionAccount.$inferInsert;
+export type TransactionAccountSelect = typeof transactionAccount.$inferSelect;
 
 
 export type TransactionInsert = typeof transaction.$inferInsert;

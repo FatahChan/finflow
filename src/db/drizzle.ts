@@ -3,5 +3,5 @@ import * as schema from './schema';
 
 
 export const db = drizzle(process.env.NETLIFY_DATABASE_URL!, {
-    schema: schema,
+    schema:schema,
 });

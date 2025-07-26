@@ -3,7 +3,7 @@ import {
   deleteAccount,
   getAccounts,
   updateAccount,
-} from "@/actions/account";
+} from "@/actions/transaction-account";
 import {
   createTransaction,
   deleteTransaction,

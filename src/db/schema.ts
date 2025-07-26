@@ -2,26 +2,42 @@ import { uuid, text, pgTable, timestamp, pgEnum, index, real } from "drizzle-orm
 import { v7 as uuidv7 } from 'uuid';
 import { currencies } from "./currencies";
 import { relations } from "drizzle-orm";
+import { user } from "./auth-schema";
+
+export * from "./auth-schema";
 
 
+export const userRelations = relations(user, ({ many }) => ({
+  accounts: many(transactionAccount, {
+    relationName: "accounts",
+  }),
+}));
 export const currencyEnum = pgEnum("currency", currencies);
-export const account = pgTable("account", {
+export const transactionAccount = pgTable("transaction_account", {
   id: uuid().primaryKey().$defaultFn(() => uuidv7()),
+  userId: text("user_id").notNull().references(() => user.id, { onDelete: "cascade" }),
   name: text().notNull(),
   currency: currencyEnum().notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
-export const accountRelations = relations(account, ({ many }) => ({
+
+
+export const transactionAccountRelations = relations(transactionAccount, ({ many, one }) => ({
   transactions: many(transaction, {
     relationName: "transactions",
+  }),
+  user:  one(user, {
+    fields: [transactionAccount.userId],
+    references: [user.id],
+    relationName: "user",
   }),
 }));
 
 export const typeEnum = pgEnum("type", ["credit", "debit"]);
 export const transaction = pgTable("transaction", {
   id: uuid().primaryKey().$defaultFn(() => uuidv7()),
-  accountId: uuid("account_id").notNull().references(() => account.id, { onDelete: "cascade" }),
+  accountId: uuid("account_id").notNull().references(() => transactionAccount.id, { onDelete: "cascade" }),
   name: text().notNull(),
   amount: real().notNull(),
   type: typeEnum().notNull(),
@@ -36,9 +52,9 @@ export const transaction = pgTable("transaction", {
 ]));
 
 export const transactionRelations = relations(transaction, ({ one }) => ({
-  account: one(account, {
+  account: one(transactionAccount, {
     fields: [transaction.accountId],
-    references: [account.id],
+    references: [transactionAccount.id],
     relationName: "account",
   }),
 }));
