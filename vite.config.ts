@@ -1,9 +1,9 @@
 // vite.config.ts
-import { defineConfig } from 'vite'
-import tsConfigPaths from 'vite-tsconfig-paths'
-import { tanstackStart } from '@tanstack/react-start/plugin/vite'
-import tailwindcss from '@tailwindcss/vite'
-import viteReactOxc from '@vitejs/plugin-react-oxc'
+import { defineConfig } from "vite";
+import tsConfigPaths from "vite-tsconfig-paths";
+import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import tailwindcss from "@tailwindcss/vite";
+import viteReactOxc from "@vitejs/plugin-react-oxc";
 
 export default defineConfig({
   server: {
@@ -11,8 +11,14 @@ export default defineConfig({
   },
   plugins: [
     tsConfigPaths(),
-    tanstackStart({ customViteReactPlugin: true, target: "netlify" }),
+    tanstackStart({
+      customViteReactPlugin: true,
+      target: "netlify",
+      spa: {
+        enabled: true,
+      },
+    }),
     viteReactOxc(),
     tailwindcss(),
   ],
-})
+});

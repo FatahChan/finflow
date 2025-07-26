@@ -5,64 +5,50 @@ export const Route = createFileRoute("/_protected/")({
   component: HomePage,
 });
 
-import { useState, useEffect } from "react";
 import { TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Money } from "@/components/ui/money";
 import { Badge } from "@/components/ui/badge";
+import { use$ } from "@legendapp/state/react";
+import { accounts$, transactions$ } from "@/lib/legend-state";
+import { useMemo } from "react";
+import type { TransactionSelect } from "@/db/type";
 
-interface Account {
-  id: string;
-  name: string;
-  currency: string;
-  balance: number;
-}
-
-interface Transaction {
-  id: string;
-  accountId: string;
-  name: string;
-  amount: number;
-  type: "credit" | "debit";
-  category: string;
-  date: string;
-}
+const calculateAccountBalance = (
+  accountId: string,
+  transactions: Record<string, TransactionSelect>
+) => {
+  return Object.values(transactions)
+    .filter((t) => t.accountId === accountId)
+    .reduce((balance, transaction) => {
+      return transaction.type === "credit"
+        ? balance + transaction.amount
+        : balance - transaction.amount;
+    }, 0);
+};
 
 export default function HomePage() {
-  const [accounts, setAccounts] = useState<Account[]>([]);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const accounts = use$(accounts$);
+  const transactions = use$(transactions$);
 
-  useEffect(() => {
-    // Load data from localStorage
-    const savedAccounts = localStorage.getItem("finance-accounts");
-    const savedTransactions = localStorage.getItem("finance-transactions");
+  const totalBalance = useMemo(
+    () =>
+      Object.values(accounts).reduce((total, account) => {
+        return total + calculateAccountBalance(account.id, transactions);
+      }, 0),
+    [accounts, transactions]
+  );
 
-    if (savedAccounts) {
-      setAccounts(JSON.parse(savedAccounts));
-    }
-    if (savedTransactions) {
-      setTransactions(JSON.parse(savedTransactions));
-    }
-  }, []);
-
-  const calculateAccountBalance = (accountId: string) => {
-    return transactions
-      .filter((t) => t.accountId === accountId)
-      .reduce((balance, transaction) => {
-        return transaction.type === "credit"
-          ? balance + transaction.amount
-          : balance - transaction.amount;
-      }, 0);
-  };
-
-  const recentTransactions = transactions
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .slice(0, 5);
-
-  const totalBalance = accounts.reduce((total, account) => {
-    return total + calculateAccountBalance(account.id);
-  }, 0);
+  const recentTransactions = useMemo(() => {
+    return Object.values(transactions)
+      .sort(
+        (a, b) =>
+          new Date(b.transactionAt).getTime() -
+          new Date(a.transactionAt).getTime()
+      )
+      .slice(0, 5);
+  }, [transactions]);
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -114,7 +100,7 @@ export default function HomePage() {
         ) : (
           <div className="space-y-3">
             {recentTransactions.map((transaction) => {
-              const account = accounts.find(
+              const account = Object.values(accounts).find(
                 (a) => a.id === transaction.accountId
               );
               return (
@@ -138,7 +124,9 @@ export default function HomePage() {
                           </div>
                           <div className="flex items-center justify-start gap-1">
                             <p className="text-xs text-muted-foreground">
-                              {new Date(transaction.date).toLocaleDateString()}
+                              {new Date(
+                                transaction.transactionAt
+                              ).toLocaleDateString()}
                             </p>
                             <Badge variant="secondary" className="text-xs">
                               {transaction.category}

@@ -1,14 +1,25 @@
+import { accounts$, transactions$ } from "@/lib/legend-state";
+import { useWhen } from "@legendapp/state/react";
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { Plus, TrendingUp, Wallet } from "lucide-react";
+import { Suspense, use } from "react";
 
 export const Route = createFileRoute("/_protected")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const accountsPromise = useWhen(accounts$);
+  const transactionsPromise = useWhen(transactions$);
+
+  use(accountsPromise);
+  use(transactionsPromise);
+
   return (
     <>
-      <Outlet />
+      <Suspense>
+        <Outlet />
+      </Suspense>
       {/* Bottom Navigation */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t">
         <div className="grid grid-cols-3 gap-1 p-2">
