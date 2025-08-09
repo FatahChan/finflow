@@ -12,8 +12,9 @@ import { Suspense, use } from "react";
 
 export const Route = createFileRoute("/_protected")({
   beforeLoad: async () => {
-    const session = authClient.getSession();
-    if (!session) {
+    const session = await authClient.getSession();
+    console.log(session);
+    if (!session.data) {
       throw redirect({ to: "/login" });
     }
   },

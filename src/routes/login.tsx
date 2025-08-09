@@ -3,12 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { when } from "@legendapp/state";
 
 export const Route = createFileRoute("/login")({
   beforeLoad: async () => {
     const session = await authClient.getSession();
-    if (session) {
+    if (session.data) {
       throw redirect({ to: "/" });
     }
   },
