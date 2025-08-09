@@ -1,6 +1,6 @@
+import { getTransactions } from "@/actions/transaction";
+import { getAccounts } from "@/actions/transaction-account";
 import { authClient } from "@/lib/auth-client";
-import { accounts$, transactions$ } from "@/lib/legend-state";
-import { useWhen } from "@legendapp/state/react";
 import {
   createFileRoute,
   Link,
@@ -12,8 +12,7 @@ import { Suspense, use } from "react";
 
 export const Route = createFileRoute("/_protected")({
   beforeLoad: async () => {
-    const { data: session } = await authClient.getSession();
-    console.log(session);
+    const session = authClient.getSession();
     if (!session) {
       throw redirect({ to: "/login" });
     }
@@ -22,12 +21,8 @@ export const Route = createFileRoute("/_protected")({
 });
 
 function RouteComponent() {
-  const accountsPromise = useWhen(accounts$);
-  const transactionsPromise = useWhen(transactions$);
-
-  use(accountsPromise);
-  use(transactionsPromise);
-
+  use(getAccounts())
+  use(getTransactions())
   return (
     <>
       <Suspense>

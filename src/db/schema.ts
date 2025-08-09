@@ -1,4 +1,4 @@
-import { uuid, text, pgTable, timestamp, pgEnum, index, real } from "drizzle-orm/pg-core";
+import { uuid, text, pgTable, timestamp, pgEnum, index, real, boolean } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from 'uuid';
 import { currencies } from "./currencies";
 import { relations } from "drizzle-orm";

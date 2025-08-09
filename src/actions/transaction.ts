@@ -125,11 +125,11 @@ export const updateTransaction = createServerFn()
 
 export const deleteTransaction = createServerFn()
   .middleware([authMiddleware])
-  .validator((data: TransactionInsert) => {
+  .validator((data: {id: string}) => {
     if (!data.id) {
       throw new Error("Transaction id is required");
     }
-    return data as TransactionInsert & { id: string };
+    return data as { id: string };
   })
   .handler(async ({ data: { id } }) => {
 

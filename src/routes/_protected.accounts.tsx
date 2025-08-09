@@ -35,9 +35,6 @@ import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
 
 import { Wallet } from "lucide-react";
 import { Money } from "@/components/ui/money";
-import { use$ } from "@legendapp/state/react";
-import { accounts$, transactions$ } from "@/lib/legend-state";
-import type { AccountInsert, AccountSelect } from "@/db/type";
 import { currencies } from "@/db/currencies";
 import { v7 as uuidv7 } from "uuid";
 import { useForm } from "react-hook-form";
@@ -50,25 +47,32 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import type {
+  TransactionAccountInsert,
+  TransactionAccountSelect,
+} from "@/db/type";
+import { use, useMemo } from "react";
+import { createAccount, deleteAccount, getAccounts, updateAccount } from "@/actions/transaction-account";
+import { getTransactions } from "@/actions/transaction";
 
 export const Route = createFileRoute("/_protected/accounts")({
   component: AccountsPage,
 });
 
 export default function AccountsPage() {
-  const accounts = use$(accounts$);
-  const transactions = use$(transactions$);
+  const accounts = use(getAccounts())
+  const transactions = use(getTransactions())
 
-  const calculateAccountBalance = (accountId: string) => {
-    return Object.values(transactions)
-      .filter((t) => t.accountId === accountId)
-      .reduce((balance, transaction) => {
-        return transaction.type === "credit"
-          ? balance + transaction.amount
-          : balance - transaction.amount;
+  const calculateAccountBalance = useMemo(() => {
+    return (accountId: string) => {
+      const accountTransactions = transactions.filter(
+        (transaction) => transaction.accountId === accountId
+      );
+      return accountTransactions.reduce((balance, transaction) => {
+        return balance + transaction.amount;
       }, 0);
-  };
-
+    };
+  }, [accounts])
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
@@ -163,7 +167,7 @@ export default function AccountsPage() {
                             <AlertDialogFooter>
                               <AlertDialogCancel>Cancel</AlertDialogCancel>
                               <AlertDialogAction
-                                onClick={() => accounts$[account.id].delete()}
+                                onClick={() => deleteAccount({ data: { id: account.id } })}
                                 className="bg-destructive hover:bg-destructive/80"
                               >
                                 Delete
@@ -187,26 +191,30 @@ function AccountDialog({
   account,
   children,
 }: {
-  account?: AccountSelect;
+  account?: TransactionAccountSelect;
   children?: React.ReactNode;
 }) {
-  const handleSubmit = (data: AccountInsert) => {
+  const handleSubmit = (data: TransactionAccountInsert) => {
     if (account) {
-      accounts$[account.id].set({
-        ...account,
-        id: account.id,
-        createdAt: account.createdAt,
-        updatedAt: new Date(),
-        ...data,
-      });
+      updateAccount({
+        data: {
+          ...account,
+          id: account.id,
+          createdAt: account.createdAt,
+          updatedAt: new Date(),
+          ...data,
+        }
+      })
     } else {
-      console.log("create");
       const id = uuidv7();
-      accounts$[id].set({
-        ...data,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        id,
+
+      createAccount({
+        data: {
+          id,
+          ...data,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
       });
     }
   };
@@ -251,10 +259,10 @@ function AccountForm({
   onSubmit,
   children,
 }: {
-  onSubmit: (data: AccountInsert) => void;
+  onSubmit: (data: TransactionAccountInsert) => void;
   children: React.ReactNode;
 }) {
-  const form = useForm<AccountInsert>({
+  const form = useForm<TransactionAccountInsert>({
     defaultValues: {
       name: "",
       currency: "USD",

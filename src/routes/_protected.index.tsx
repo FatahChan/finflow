@@ -10,16 +10,16 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Money } from "@/components/ui/money";
 import { Badge } from "@/components/ui/badge";
-import { use$ } from "@legendapp/state/react";
-import { accounts$, transactions$ } from "@/lib/legend-state";
-import { useMemo } from "react";
+import { use, useMemo } from "react";
 import type { TransactionSelect } from "@/db/type";
+import { getAccounts } from "@/actions/transaction-account";
+import { getTransactions } from "@/actions/transaction";
 
 const calculateAccountBalance = (
   accountId: string,
-  transactions: Record<string, TransactionSelect>
+  transactions: TransactionSelect[]
 ) => {
-  return Object.values(transactions)
+  return transactions
     .filter((t) => t.accountId === accountId)
     .reduce((balance, transaction) => {
       return transaction.type === "credit"
@@ -29,8 +29,8 @@ const calculateAccountBalance = (
 };
 
 export default function HomePage() {
-  const accounts = use$(accounts$);
-  const transactions = use$(transactions$);
+  const accounts = use(getAccounts());
+  const transactions = use(getTransactions());
 
   const totalBalance = useMemo(
     () =>

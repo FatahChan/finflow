@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 import type React from "react";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import { ArrowLeft, Plus, Edit, Trash2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -46,10 +46,11 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { use$ } from "@legendapp/state/react";
-import { accounts$, transactions$ } from "@/lib/legend-state";
 import { Calendar } from "@/components/ui/calendar";
 import { v7 as uuidv7 } from "uuid";
 import { DialogClose } from "@radix-ui/react-dialog";
+import { getAccounts } from "@/actions/transaction-account";
+import { createTransaction, deleteTransaction, getTransactions, updateTransaction } from "@/actions/transaction";
 
 export const Route = createFileRoute("/_protected/transactions")({
   component: TransactionsPage,
@@ -70,8 +71,8 @@ const categories = [
 ];
 
 export default function TransactionsPage() {
-  const accounts = use$(accounts$);
-  const transactions = use$(transactions$);
+  const accounts = use(getAccounts());
+  const transactions = use(getTransactions());
 
   const [filterAccount, setFilterAccount] = useState<string>("all");
   const [filterType, setFilterType] = useState<
@@ -182,7 +183,7 @@ export default function TransactionsPage() {
         ) : (
           <div className="space-y-4">
             {filteredTransactions.map((transaction) => {
-              const account = accounts$[transaction.accountId].peek();
+              const account = accounts.find(account=> account.id === transaction.accountId)
               return (
                 <Card key={transaction.id}>
                   <CardContent className="pt-0">
@@ -250,7 +251,7 @@ export default function TransactionsPage() {
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() =>
-                                    transactions$[transaction.id].delete()
+                                    deleteTransaction({data: {id: transaction.id}})
                                   }
                                   className="bg-destructive hover:bg-destructive/80"
                                 >
@@ -282,22 +283,22 @@ function TransactionDialog({
 }) {
   const handleSubmit = (data: TransactionInsert) => {
     if (transaction) {
-      transactions$[transaction.id].set({
+      updateTransaction({data: {
         ...transaction,
         id: transaction.id,
         createdAt: transaction.createdAt,
         updatedAt: new Date(),
         ...data,
-      });
+    }});
     } else {
       const id = uuidv7();
-      transactions$[id].set({
+      createTransaction({data:{
         ...data,
         transactionAt: data.transactionAt,
         createdAt: new Date(),
         updatedAt: new Date(),
         id,
-      });
+      }});
     }
   };
   return (
@@ -354,7 +355,7 @@ function TransactionForm({
       transactionAt: new Date(),
     },
   });
-  const accounts = use$(accounts$);
+  const accounts = use(getAccounts());
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
