@@ -57,11 +57,15 @@ import { getTransactions } from "@/actions/transaction";
 
 export const Route = createFileRoute("/_protected/accounts")({
   component: AccountsPage,
+  loader: async () => {
+    const accounts = await getAccounts();
+    const transactions = await getTransactions();
+    return { transactions, accounts };
+  }
 });
 
 export default function AccountsPage() {
-  const accounts = use(getAccounts())
-  const transactions = use(getTransactions())
+  const { transactions, accounts } = Route.useLoaderData();
 
   const calculateAccountBalance = useMemo(() => {
     return (accountId: string) => {

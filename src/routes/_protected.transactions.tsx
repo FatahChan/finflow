@@ -45,7 +45,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { use$ } from "@legendapp/state/react";
 import { Calendar } from "@/components/ui/calendar";
 import { v7 as uuidv7 } from "uuid";
 import { DialogClose } from "@radix-ui/react-dialog";
@@ -54,6 +53,11 @@ import { createTransaction, deleteTransaction, getTransactions, updateTransactio
 
 export const Route = createFileRoute("/_protected/transactions")({
   component: TransactionsPage,
+  loader: async () => {
+    const accounts = await getAccounts();
+    const transactions = await getTransactions();
+    return { transactions, accounts };
+  },
 });
 
 const categories = [
@@ -71,8 +75,8 @@ const categories = [
 ];
 
 export default function TransactionsPage() {
-  const accounts = use(getAccounts());
-  const transactions = use(getTransactions());
+
+  const { transactions, accounts } = Route.useLoaderData();
 
   const [filterAccount, setFilterAccount] = useState<string>("all");
   const [filterType, setFilterType] = useState<

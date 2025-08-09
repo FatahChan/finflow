@@ -18,12 +18,16 @@ export const Route = createFileRoute("/_protected")({
       throw redirect({ to: "/login" });
     }
   },
+  loader: async () => {
+    const accounts = await getAccounts();
+    const transactions = await getTransactions();
+    return { accounts, transactions };
+  },
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  use(getAccounts())
-  use(getTransactions())
+ Route.useLoaderData()
   return (
     <>
       <Suspense>

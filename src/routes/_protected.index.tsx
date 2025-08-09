@@ -3,14 +3,18 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_protected/")({
   component: HomePage,
-});
+  loader: async () => {
+    const accounts = await getAccounts();
+    const transactions = await getTransactions();
+    return { transactions, accounts };
+  }});
 
 import { TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Money } from "@/components/ui/money";
 import { Badge } from "@/components/ui/badge";
-import { use, useMemo } from "react";
+import {  useMemo } from "react";
 import type { TransactionSelect } from "@/db/type";
 import { getAccounts } from "@/actions/transaction-account";
 import { getTransactions } from "@/actions/transaction";
@@ -29,8 +33,7 @@ const calculateAccountBalance = (
 };
 
 export default function HomePage() {
-  const accounts = use(getAccounts());
-  const transactions = use(getTransactions());
+  const { transactions, accounts } = Route.useLoaderData();
 
   const totalBalance = useMemo(
     () =>
