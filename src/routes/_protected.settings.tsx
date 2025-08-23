@@ -14,8 +14,8 @@ import {
   type Currency,
 } from "@/lib/legend-state";
 import { Globe, Moon, Download, Trash2 } from "lucide-react";
-import { useState } from "react";
 import { NativeSelect } from "@/components/ui/native-select";
+import { useTheme } from "next-themes";
 
 export const Route = createFileRoute("/_protected/settings")({
   component: SettingsPage,
@@ -31,7 +31,7 @@ export const Route = createFileRoute("/_protected/settings")({
 export default function SettingsPage() {
   const user = db.useUser();
 
-  const [darkMode, setDarkMode] = useState(false);
+  const { theme, setTheme } = useTheme();
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -87,7 +87,12 @@ export default function SettingsPage() {
                   </p>
                 </div>
               </div>
-              <Switch checked={darkMode} onCheckedChange={setDarkMode} />
+              <Switch
+                checked={theme === "dark"}
+                onCheckedChange={(checked) =>
+                  setTheme(checked ? "dark" : "light")
+                }
+              />
             </div>
             <Separator />
             <div className="flex items-start flex-col gap-3">

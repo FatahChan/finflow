@@ -7,6 +7,7 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "next-themes";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -48,6 +49,7 @@ export const Route = createRootRoute({
       },
     ],
   }),
+
   component: RootComponent,
 });
 
@@ -61,15 +63,17 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <html>
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Toaster />
-        <Scripts />
-      </body>
-    </html>
+    <ThemeProvider attribute="class">
+      <html>
+        <head>
+          <HeadContent />
+        </head>
+        <body>
+          {children}
+          <Toaster />
+          <Scripts />
+        </body>
+      </html>
+    </ThemeProvider>
   );
 }

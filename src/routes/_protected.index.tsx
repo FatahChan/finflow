@@ -1,7 +1,7 @@
 // src/routes/index.tsx
 import { Link, createFileRoute } from "@tanstack/react-router";
 
-import { TrendingUp } from "lucide-react";
+import { HandCoins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Money } from "@/components/ui/money";
@@ -87,7 +87,7 @@ export default function HomePage() {
         {!transactions || transactions.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center">
-              <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <HandCoins className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground mb-4">No transactions yet</p>
               <Link to="/transactions">
                 <Button>Add Your First Transaction</Button>

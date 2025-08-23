@@ -2,7 +2,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { Plus, Edit, Trash2, TrendingUp } from "lucide-react";
+import { Plus, Edit, Trash2, HandCoins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -156,7 +156,7 @@ export default function TransactionsPage() {
         {accounts.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center">
-              <TrendingUp className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <HandCoins className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">
                 No accounts found
               </h3>
@@ -171,7 +171,7 @@ export default function TransactionsPage() {
         ) : filteredTransactions.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center">
-              <TrendingUp className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+              <HandCoins className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium text-foreground mb-2">
                 No transactions yet
               </h3>

@@ -26,7 +26,7 @@ function RouteComponent() {
         <Outlet />
       </Suspense>
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t">
+      <div className="fixed bottom-0 left-0 right-0 bg-background border-t">
         <div className="grid grid-cols-3 gap-1 p-2">
           <Link
             to="/"
