@@ -12,6 +12,7 @@ export const Route = createFileRoute("/login")({
     }
   },
   component: LoginPage,
+  ssr: false,
 });
 
 function LoginPage() {
@@ -36,11 +37,17 @@ function LoginPage() {
           <div className="text-center text-sm text-gray-500 mt-6">
             <p>
               By signing in, you agree to our{" "}
-              <Link to="/terms" className="text-blue-600 hover:text-blue-800 underline">
+              <Link
+                to="/terms"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
                 Terms of Service
               </Link>{" "}
               and{" "}
-              <Link to="/privacy" className="text-blue-600 hover:text-blue-800 underline">
+              <Link
+                to="/privacy"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
                 Privacy Policy
               </Link>
             </p>
