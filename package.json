@@ -52,6 +52,7 @@
     "@types/node": "24.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
+    "@vite-pwa/assets-generator": "^1.0.0",
     "@vitejs/plugin-react": "^4.6.0",
     "@vitejs/plugin-react-oxc": "^0.3.0",
     "dotenv": "^17.2.0",
@@ -65,6 +66,7 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
     "vite": "npm:rolldown-vite@latest",
+    "vite-plugin-pwa": "^1.0.3",
     "vite-tsconfig-paths": "^5.1.4"
   }
 }

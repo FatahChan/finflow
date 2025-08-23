@@ -4,6 +4,7 @@ import tsConfigPaths from "vite-tsconfig-paths";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
 import viteReactOxc from "@vitejs/plugin-react-oxc";
+import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
   server: {
@@ -13,7 +14,7 @@ export default defineConfig({
     tsConfigPaths(),
     tanstackStart({
       customViteReactPlugin: true,
-      target: "netlify",
+      target: "vercel",
       spa: {
         enabled: true,
       },
@@ -33,6 +34,43 @@ export default defineConfig({
           },
         },
       ]
+    }),
+    VitePWA({
+      registerType: "autoUpdate",
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,js}"],
+      },
+      manifest: {
+        name: "FinFlow",
+        short_name: "FinFlow",
+        description: "A personal finance management app",
+        theme_color: "#4F46E5",
+        background_color: "#4F46E5",
+        icons: [
+          {
+            src: "pwa-64x64.png",
+            sizes: "64x64",
+            type: "image/png",
+          },
+          {
+            src: "pwa-192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "pwa-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "maskable-icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
+      },
     }),
     viteReactOxc(),
     tailwindcss(),
