@@ -7,13 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -61,6 +54,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Header } from "@/components/header";
 import { NavigationDrawer } from "@/components/navigation-drawer";
+import { NativeSelect } from "@/components/ui/native-select";
 
 const searchSchema = z.object({
   filterAccount: z.string().default("all").catch("all"),
@@ -125,40 +119,34 @@ export default function TransactionsPage() {
       {accounts.length > 0 && !isLoading && (
         <div className="px-4 py-4 bg-card border-b">
           <div className="flex space-x-2">
-            <Select
+            <NativeSelect
               value={filterAccount}
-              onValueChange={(value) =>
-                navigate({ search: { filterAccount: value } })
+              onChange={(e) =>
+                navigate({ search: { filterAccount: e.target.value } })
               }
+              className="flex-1"
             >
-              <SelectTrigger className="flex-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Accounts</SelectItem>
-                {accounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id}>
-                    {account.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+              {accounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </NativeSelect>
 
-            <Select
+            <NativeSelect
               value={filterType}
-              onValueChange={(value: "credit" | "debit" | "all") =>
-                navigate({ search: { filterType: value } })
+              onChange={(e) =>
+                navigate({
+                  search: {
+                    filterType: e.target.value as "all" | "credit" | "debit",
+                  },
+                })
               }
             >
-              <SelectTrigger className="flex-1">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                <SelectItem value="credit">Credit</SelectItem>
-                <SelectItem value="debit">Debit</SelectItem>
-              </SelectContent>
-            </Select>
+              <option value="all">All Types</option>
+              <option value="credit">Credit</option>
+              <option value="debit">Debit</option>
+            </NativeSelect>
           </div>
         </div>
       )}
@@ -410,18 +398,16 @@ function TransactionForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Account</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select account" />
-                </SelectTrigger>
-                <SelectContent>
-                  {accounts.map((account) => (
-                    <SelectItem key={account.id} value={account.id}>
-                      {account.name} ({account.currency})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <NativeSelect
+                onChange={(e) => field.onChange(e.target.value)}
+                defaultValue={field.value}
+              >
+                {accounts.map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name} ({account.currency})
+                  </option>
+                ))}
+              </NativeSelect>
               <FormDescription>
                 Select the account associated with this transaction.
               </FormDescription>
@@ -472,15 +458,13 @@ function TransactionForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Type</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger className="w-full" onBlur={field.onBlur}>
-                  <SelectValue placeholder="Select type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="credit">Credit (Income)</SelectItem>
-                  <SelectItem value="debit">Debit (Expense)</SelectItem>
-                </SelectContent>
-              </Select>
+              <NativeSelect
+                onChange={(e) => field.onChange(e.target.value)}
+                defaultValue={field.value}
+              >
+                <option value="credit">Credit (Income)</option>
+                <option value="debit">Debit (Expense)</option>
+              </NativeSelect>
               <FormDescription>
                 Select the type of this transaction.
               </FormDescription>
@@ -496,18 +480,16 @@ function TransactionForm({
             <FormItem>
               <FormLabel>Category</FormLabel>
               <FormControl>
-                <Select onValueChange={field.onChange} value={field.value}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories[type].map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <NativeSelect
+                  onChange={(e) => field.onChange(e.target.value)}
+                  value={field.value}
+                >
+                  {categories[type].map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </NativeSelect>
               </FormControl>
               <FormDescription>
                 Select the category for this transaction.
