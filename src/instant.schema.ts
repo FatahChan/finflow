@@ -29,6 +29,7 @@ const _schema = i.schema({
         on: "accounts",
         has: "one",
         label: "user",
+        required: true,
         onDelete: "cascade",
       },
       reverse: {
