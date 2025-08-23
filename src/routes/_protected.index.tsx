@@ -37,12 +37,6 @@ export default function HomePage() {
   }, [transactions, isLoading, defaultCurrency, exchangeRates]);
   const totalBalance = use$(totalBalance$);
 
-  console.log("totalBalance", totalBalance);
-  console.log("transactions", transactions);
-  console.log("isLoading", isLoading);
-  console.log("defaultCurrency", defaultCurrency);
-  console.log("exchangeRates", exchangeRates);
-
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}

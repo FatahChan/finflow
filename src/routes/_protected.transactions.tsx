@@ -324,8 +324,8 @@ function TransactionDialog({
           db.tx.transactions[_id].create({
             ...data,
           }),
-          db.tx.accounts[accountId].link({
-            transactions: _id,
+          db.tx.transactions[_id].link({
+            account: accountId,
           }),
         ]);
       }

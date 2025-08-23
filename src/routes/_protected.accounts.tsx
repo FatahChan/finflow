@@ -282,7 +282,6 @@ function AccountForm({
     <Form {...form}>
       <form
         onSubmit={(e) => {
-          console.log("submit");
           form.handleSubmit(onSubmit)(e);
         }}
         className="space-y-4"
