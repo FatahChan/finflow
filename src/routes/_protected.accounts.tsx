@@ -56,13 +56,14 @@ import z from "zod";
 import { id } from "@instantdb/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { currencies$ } from "@/lib/legend-state";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export const Route = createFileRoute("/_protected/accounts")({
   component: AccountsPage,
 });
 
 export default function AccountsPage() {
-  const { data } = db.useQuery(accountsWithTransactionsQuery);
+  const { data, isLoading } = db.useQuery(accountsWithTransactionsQuery);
   const accounts = data?.accounts;
 
   const accountsBalance = useMemo<Record<string, number>>(() => {
@@ -129,11 +130,15 @@ export default function AccountsPage() {
                       <h3 className="font-medium text-foreground mb-1">
                         {account.name}
                       </h3>
-                      <Money
-                        amount={accountsBalance[account.id]}
-                        currency={account.currency}
-                        positive={accountsBalance[account.id] >= 0}
-                      />
+                      {isLoading ? (
+                        <Skeleton className="h-4 w-20" />
+                      ) : (
+                        <Money
+                          amount={accountsBalance[account.id]}
+                          currency={account.currency}
+                          positive={accountsBalance[account.id] >= 0}
+                        />
+                      )}
                     </div>
                     <div className="flex space-x-2">
                       <AccountDialog>

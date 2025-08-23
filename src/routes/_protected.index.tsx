@@ -16,11 +16,11 @@ export const Route = createFileRoute("/_protected/")({
 });
 
 export default function HomePage() {
-  const { data } = db.useQuery(transactionsWithAccountQuery);
+  const { data, isLoading } = db.useQuery(transactionsWithAccountQuery);
   const transactions = data?.transactions;
   const defaultCurrency = use$(defaultCurrency$.get());
   const totalBalance$ = useObservable(() => {
-    if (!transactions) return 0;
+    if (!transactions || isLoading) return 0;
     const exchangeRates = currencies$.exchangeRates.get();
     return transactions.reduce((acc, transaction) => {
       if (transaction.account?.currency === defaultCurrency) {

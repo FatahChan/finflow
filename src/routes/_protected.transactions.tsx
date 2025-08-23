@@ -74,7 +74,7 @@ export default function TransactionsPage() {
   const { filterAccount, filterType } = Route.useSearch();
   const navigate = Route.useNavigate();
 
-  const { data } = db.useQuery({
+  const { data, isLoading } = db.useQuery({
     transactions: {
       $: {
         where: {
@@ -117,7 +117,7 @@ export default function TransactionsPage() {
       </div>
 
       {/* Filters */}
-      {Object.values(accounts).length > 0 && (
+      {accounts.length > 0 && !isLoading && (
         <div className="px-4 py-4 bg-card border-b">
           <div className="flex space-x-2">
             <Select
@@ -131,7 +131,7 @@ export default function TransactionsPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Accounts</SelectItem>
-                {Object.values(accounts).map((account) => (
+                {accounts.map((account) => (
                   <SelectItem key={account.id} value={account.id}>
                     {account.name}
                   </SelectItem>
@@ -160,7 +160,7 @@ export default function TransactionsPage() {
 
       {/* Transactions List */}
       <div className="px-4 py-6">
-        {Object.values(accounts).length === 0 ? (
+        {accounts.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center">
               <TrendingUp className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
