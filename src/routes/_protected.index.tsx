@@ -8,8 +8,9 @@ import { Money } from "@/components/ui/money";
 import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/instant-db";
 import { transactionsWithAccountQuery } from "@/instant.queries";
-import { use$, useObservable } from "@legendapp/state/react";
+import { use$ } from "@legendapp/state/react";
 import { currencies$, defaultCurrency$ } from "@/lib/legend-state";
+import { useMemo } from "react";
 
 export const Route = createFileRoute("/_protected/")({
   component: HomePage,
@@ -19,9 +20,10 @@ export default function HomePage() {
   const { data, isLoading } = db.useQuery(transactionsWithAccountQuery);
   const transactions = data?.transactions;
   const defaultCurrency = use$(defaultCurrency$.get());
-  const totalBalance$ = useObservable(() => {
+  const exchangeRates = use$(currencies$.exchangeRates.get());
+
+  const totalBalance$ = useMemo(() => {
     if (!transactions || isLoading) return 0;
-    const exchangeRates = currencies$.exchangeRates.get();
     return transactions.reduce((acc, transaction) => {
       if (transaction.account?.currency === defaultCurrency) {
         return acc + transaction.amount;
@@ -32,7 +34,7 @@ export default function HomePage() {
         );
       }
     }, 0);
-  });
+  }, [transactions, isLoading, defaultCurrency, exchangeRates]);
   const totalBalance = use$(totalBalance$);
 
   return (
