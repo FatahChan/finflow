@@ -42,7 +42,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <div className="bg-card border-b px-4 py-6">
-        <h1 className="text-2xl font-bold text-foreground">Finance Manager</h1>
+        <h1 className="text-2xl font-bold text-foreground">FinFlow</h1>
         <p className="text-muted-foreground mt-1">
           Track your accounts and transactions
         </p>

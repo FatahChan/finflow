@@ -5,7 +5,7 @@ import {
   Outlet,
   redirect,
 } from "@tanstack/react-router";
-import { Plus, TrendingUp, Wallet } from "lucide-react";
+import { HandCoins, Home, Wallet } from "lucide-react";
 import { Suspense } from "react";
 
 export const Route = createFileRoute("/_protected")({
@@ -33,7 +33,7 @@ function RouteComponent() {
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >
-            <Wallet className="h-5 w-5 mb-1" />
+            <Home className="h-5 w-5 mb-1" />
             <span className="text-xs font-medium">Home</span>
           </Link>
           <Link
@@ -41,7 +41,7 @@ function RouteComponent() {
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >
-            <Plus className="h-5 w-5 mb-1" />
+            <Wallet className="h-5 w-5 mb-1" />
             <span className="text-xs">Accounts</span>
           </Link>
           <Link
@@ -49,7 +49,7 @@ function RouteComponent() {
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >
-            <TrendingUp className="h-5 w-5 mb-1" />
+            <HandCoins className="h-5 w-5 mb-1" />
             <span className="text-xs">Transactions</span>
           </Link>
         </div>

@@ -9,7 +9,7 @@ export function Money({
 }) {
   return (
     <p
-      className={`font-semibold ${
+      className={`font-semibold uppercase ${
         positive ? "text-secondary" : "text-destructive"
       }`}
     >
