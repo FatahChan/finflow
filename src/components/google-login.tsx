@@ -7,9 +7,10 @@ import { toast } from "sonner";
 import * as jose from "jose";
 import { db } from "@/lib/instant-db";
 import { id } from "@instantdb/react";
+import { clientEnv } from "@/lib/client-env";
 
-const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const GOOGLE_CLIENT_NAME = import.meta.env.VITE_GOOGLE_CLIENT_NAME;
+const GOOGLE_CLIENT_ID = clientEnv.VITE_GOOGLE_CLIENT_ID;
+const GOOGLE_CLIENT_NAME = clientEnv.VITE_GOOGLE_CLIENT_NAME;
 
 type jwtDecoded = Partial<{
   iss: string;

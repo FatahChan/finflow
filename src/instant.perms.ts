@@ -8,6 +8,24 @@ const rules = {
       $default: "false",
     },
   },
+  $default: {
+    allow: {
+      view: "false",
+      delete: "false",
+      update: "false",
+      create: "false",
+    },
+  },
+  $user: {
+    allow: {
+      view: "isOwner",
+      delete: "isOwner",
+    },
+    bind: [
+      "isOwner",
+      "auth.id != null && data.id == auth.ref('$user.id')",
+    ],
+  },
   profiles: {
     bind: [
       "isOwner",

@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/header";
 import { NavigationDrawer } from "@/components/navigation-drawer";
@@ -16,6 +16,21 @@ import {
 import { Globe, Moon, Download, Trash2 } from "lucide-react";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useTheme } from "next-themes";
+import type { ComponentProps } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { useIsOnline } from "react-use-is-online";
+import { deleteUser } from "@/actions/delete-user";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/_protected/settings")({
   component: SettingsPage,
@@ -134,22 +149,8 @@ export default function SettingsPage() {
             <CardTitle>Data Management</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Button
-              variant="outline"
-              size="sm"
-              className="justify-start w-full"
-            >
-              <Download className="h-4 w-4 mr-2" />
-              Export Data
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="justify-start w-full text-destructive hover:text-destructive"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete All Data
-            </Button>
+            <ExportButton />
+            <DeleteAllDataButton />
           </CardContent>
         </Card>
 
@@ -187,18 +188,98 @@ export default function SettingsPage() {
               >
                 <Link to="/terms">Terms of Service</Link>
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="justify-start"
-                asChild
-              >
-                <a href="mailto:contact@finflow.com">Contact Support</a>
-              </Button>
             </div>
           </CardContent>
         </Card>
       </div>
     </div>
+  );
+}
+function DeleteAllDataButton({ ...props }: ComponentProps<typeof Button>) {
+  const auth = db.useAuth();
+  const { isOnline } = useIsOnline();
+  const navigate = useNavigate();
+  const refreshToken = auth.user?.refresh_token;
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          className="justify-start w-full text-destructive hover:text-destructive"
+          {...props}
+          disabled={!isOnline || !refreshToken}
+        >
+          <Trash2 className="h-4 w-4 mr-2" />
+          Delete All Data{" "}
+          {!isOnline
+            ? "(You are offline)"
+            : !refreshToken
+            ? "(Please re-login to delete your data)"
+            : ""}
+        </Button>
+      </AlertDialogTrigger>
+      {isOnline && refreshToken ? (
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              account and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                deleteUser({
+                  data: refreshToken,
+                })
+                  .then(async () => {
+                    await db.auth.signOut();
+                    navigate({ to: "/login" });
+                  })
+                  .catch((err) => {
+                    toast.error(err.message);
+                  });
+              }}
+              variant="destructive"
+            >
+              Continue
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      ) : null}
+    </AlertDialog>
+  );
+}
+function ExportButton({ onClick, ...props }: ComponentProps<typeof Button>) {
+  const { data } = db.useQuery({
+    accounts: {
+      transactions: {},
+    },
+  });
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className="justify-start w-full"
+      onClick={(e) => {
+        const blob = new Blob([JSON.stringify(data)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "data.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        onClick?.(e);
+      }}
+      {...props}
+    >
+      <Download className="h-4 w-4 mr-2" />
+      Export Data
+    </Button>
   );
 }
