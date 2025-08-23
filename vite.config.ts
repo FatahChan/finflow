@@ -17,6 +17,22 @@ export default defineConfig({
       spa: {
         enabled: true,
       },
+      pages:[
+        {
+          path: "/privacy",
+          prerender: {
+            enabled: true,
+            outputPath: "privacy.html",
+          },
+        },
+        {
+          path: "/terms",
+          prerender: {
+            enabled: true,
+            outputPath: "terms.html",
+          },
+        },
+      ]
     }),
     viteReactOxc(),
     tailwindcss(),

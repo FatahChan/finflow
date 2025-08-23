@@ -1,4 +1,7 @@
 onlyBuiltDependencies:
+  - '@firebase/util'
   - '@parcel/watcher'
   - '@tailwindcss/oxide'
   - esbuild
+  - protobufjs
+  - rxdb

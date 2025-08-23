@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
 import type React from "react";
 
@@ -35,8 +35,6 @@ import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
 
 import { Wallet } from "lucide-react";
 import { Money } from "@/components/ui/money";
-import { currencies } from "@/db/currencies";
-import { v7 as uuidv7 } from "uuid";
 import { useForm } from "react-hook-form";
 import {
   Form,
@@ -47,36 +45,38 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import type {
-  TransactionAccountInsert,
-  TransactionAccountSelect,
-} from "@/db/type";
-import { use, useMemo } from "react";
-import { createAccount, deleteAccount, getAccounts, updateAccount } from "@/actions/transaction-account";
-import { getTransactions } from "@/actions/transaction";
+import { useMemo } from "react";
+import { db } from "@/lib/instant-db";
+import {
+  accountsWithTransactionsQuery,
+  type ReturnQuery,
+} from "@/instant.queries";
+import { use$ } from "@legendapp/state/react";
+import z from "zod";
+import { id } from "@instantdb/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { currencies$ } from "@/lib/legend-state";
 
 export const Route = createFileRoute("/_protected/accounts")({
   component: AccountsPage,
-  loader: async () => {
-    const accounts = await getAccounts();
-    const transactions = await getTransactions();
-    return { transactions, accounts };
-  }
 });
 
 export default function AccountsPage() {
-  const { transactions, accounts } = Route.useLoaderData();
+  const { data } = db.useQuery(accountsWithTransactionsQuery);
+  const accounts = data?.accounts;
 
-  const calculateAccountBalance = useMemo(() => {
-    return (accountId: string) => {
-      const accountTransactions = transactions.filter(
-        (transaction) => transaction.accountId === accountId
-      );
-      return accountTransactions.reduce((balance, transaction) => {
-        return balance + transaction.amount;
-      }, 0);
-    };
-  }, [accounts])
+  const accountsBalance = useMemo<Record<string, number>>(() => {
+    if (!accounts) return {};
+    return accounts.reduce((acc, account) => {
+      return {
+        ...acc,
+        [account.id]: account.transactions.reduce((acc, transaction) => {
+          return acc + transaction.amount;
+        }, 0),
+      };
+    }, {});
+  }, [accounts]);
+
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
@@ -101,7 +101,7 @@ export default function AccountsPage() {
 
       {/* Accounts List */}
       <div className="px-4 py-6">
-        {Object.values(accounts).length === 0 ? (
+        {accounts?.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center">
               <Wallet className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
@@ -121,69 +121,67 @@ export default function AccountsPage() {
           </Card>
         ) : (
           <div className="space-y-4">
-            {Object.values(accounts)
-              .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
-              .map((account) => (
-                <Card key={account.id}>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center justify-between">
-                      <div className="flex-1">
-                        <h3 className="font-medium text-foreground mb-1">
-                          {account.name}
-                        </h3>
-                        <Money
-                          amount={calculateAccountBalance(account.id)}
-                          currency={account.currency}
-                          positive={calculateAccountBalance(account.id) >= 0}
-                        />
-                      </div>
-                      <div className="flex space-x-2">
-                        <AccountDialog>
+            {accounts?.map((account) => (
+              <Card key={account.id}>
+                <CardContent className="pt-0">
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="font-medium text-foreground mb-1">
+                        {account.name}
+                      </h3>
+                      <Money
+                        amount={accountsBalance[account.id]}
+                        currency={account.currency}
+                        positive={accountsBalance[account.id] >= 0}
+                      />
+                    </div>
+                    <div className="flex space-x-2">
+                      <AccountDialog>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="hover:bg-primary hover:text-primary-foreground"
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </AccountDialog>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
                           <Button
                             variant="outline"
                             size="icon"
-                            className="hover:bg-primary hover:text-primary-foreground"
+                            className="hover:bg-destructive hover:text-destructive-foreground"
                           >
-                            <Edit className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
-                        </AccountDialog>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="hover:bg-destructive hover:text-destructive-foreground"
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{account.name}
+                              "? This will also delete all associated
+                              transactions. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() =>
+                                db.transact(db.tx.accounts[account.id].delete())
+                              }
+                              className="bg-destructive hover:bg-destructive/80"
                             >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Delete Account
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{account.name}
-                                "? This will also delete all associated
-                                transactions. This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => deleteAccount({ data: { id: account.id } })}
-                                className="bg-destructive hover:bg-destructive/80"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
-                  </CardContent>
-                </Card>
-              ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         )}
       </div>
@@ -191,35 +189,36 @@ export default function AccountsPage() {
   );
 }
 
+const accountZodSchema = z.object({
+  name: z.string(),
+  currency: z.string(),
+});
+type AccountZodType = z.infer<typeof accountZodSchema>;
+
 function AccountDialog({
   account,
   children,
 }: {
-  account?: TransactionAccountSelect;
+  account?: ReturnQuery<
+    typeof accountsWithTransactionsQuery
+  >["accounts"][number];
   children?: React.ReactNode;
 }) {
-  const handleSubmit = (data: TransactionAccountInsert) => {
+  const handleSubmit = (data: AccountZodType) => {
     if (account) {
-      updateAccount({
-        data: {
+      db.transact(
+        db.tx.accounts[account.id].update({
           ...account,
-          id: account.id,
-          createdAt: account.createdAt,
-          updatedAt: new Date(),
           ...data,
-        }
-      })
+        })
+      );
     } else {
-      const id = uuidv7();
-
-      createAccount({
-        data: {
-          id,
+      const _id = id();
+      db.transact([
+        db.tx.accounts[_id].create({
           ...data,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        },
-      });
+        }),
+      ]);
     }
   };
   return (
@@ -263,13 +262,15 @@ function AccountForm({
   onSubmit,
   children,
 }: {
-  onSubmit: (data: TransactionAccountInsert) => void;
+  onSubmit: (data: AccountZodType) => void;
   children: React.ReactNode;
 }) {
-  const form = useForm<TransactionAccountInsert>({
+  const currencies = use$(currencies$.currencies.get());
+  const form = useForm<AccountZodType>({
+    resolver: zodResolver(accountZodSchema),
     defaultValues: {
       name: "",
-      currency: "USD",
+      currency: "usd",
     },
   });
   return (

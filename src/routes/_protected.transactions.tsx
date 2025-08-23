@@ -1,8 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { Link, createFileRoute } from "@tanstack/react-router";
 
-import type React from "react";
+import { zodResolver } from "@hookform/resolvers/zod";
 
-import { use, useState } from "react";
 import { ArrowLeft, Plus, Edit, Trash2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
@@ -34,7 +34,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Money } from "@/components/ui/money";
-import type { TransactionInsert, TransactionSelect } from "@/db/type";
 import {
   Form,
   FormControl,
@@ -46,46 +45,51 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Calendar } from "@/components/ui/calendar";
-import { v7 as uuidv7 } from "uuid";
-import { DialogClose } from "@radix-ui/react-dialog";
-import { getAccounts } from "@/actions/transaction-account";
-import { createTransaction, deleteTransaction, getTransactions, updateTransaction } from "@/actions/transaction";
+import { zodValidator } from "@tanstack/zod-adapter";
+import { z } from "zod";
+import { db } from "@/lib/instant-db";
+import { id } from "@instantdb/react";
+import {
+  accountsQuery,
+  transactionsWithAccountQuery,
+  type ReturnQuery,
+} from "@/instant.queries";
+import { use$ } from "@legendapp/state/react";
 
-export const Route = createFileRoute("/_protected/transactions")({
-  component: TransactionsPage,
-  loader: async () => {
-    const accounts = await getAccounts();
-    const transactions = await getTransactions();
-    return { transactions, accounts };
-  },
+import { categories$ } from "@/lib/legend-state";
+import { useState } from "react";
+import { toast } from "sonner";
+
+const searchSchema = z.object({
+  filterAccount: z.string().default("all").catch("all"),
+  filterType: z.enum(["all", "credit", "debit"]).default("all").catch("all"),
 });
 
-const categories = [
-  "Food & Dining",
-  "Transportation",
-  "Shopping",
-  "Entertainment",
-  "Bills & Utilities",
-  "Healthcare",
-  "Education",
-  "Travel",
-  "Income",
-  "Investment",
-  "Other",
-];
+export const Route = createFileRoute("/_protected/transactions")({
+  validateSearch: zodValidator(searchSchema),
+  component: TransactionsPage,
+});
 
 export default function TransactionsPage() {
+  const { filterAccount, filterType } = Route.useSearch();
+  const navigate = Route.useNavigate();
 
-  const { transactions, accounts } = Route.useLoaderData();
-
-  const [filterAccount, setFilterAccount] = useState<string>("all");
-  const [filterType, setFilterType] = useState<
-    TransactionSelect["type"] | "all"
-  >("all");
-
-  const filteredTransactions = Object.values(transactions)
-    .filter((t) => filterType === "all" || t.type === filterType)
-    .filter((t) => filterAccount === "all" || t.accountId === filterAccount);
+  const { data } = db.useQuery({
+    transactions: {
+      $: {
+        where: {
+          "account.id":
+            filterAccount === "all" ? { $isNull: false } : filterAccount,
+          type:
+            filterType === "all" ? { $in: ["credit", "debit"] } : filterType,
+        },
+      },
+      account: {},
+    },
+    ...accountsQuery,
+  });
+  const filteredTransactions = data?.transactions || [];
+  const accounts = data?.accounts || [];
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -116,7 +120,12 @@ export default function TransactionsPage() {
       {Object.values(accounts).length > 0 && (
         <div className="px-4 py-4 bg-card border-b">
           <div className="flex space-x-2">
-            <Select value={filterAccount} onValueChange={setFilterAccount}>
+            <Select
+              value={filterAccount}
+              onValueChange={(value) =>
+                navigate({ search: { filterAccount: value } })
+              }
+            >
               <SelectTrigger className="flex-1">
                 <SelectValue />
               </SelectTrigger>
@@ -133,7 +142,7 @@ export default function TransactionsPage() {
             <Select
               value={filterType}
               onValueChange={(value: "credit" | "debit" | "all") =>
-                setFilterType(value)
+                navigate({ search: { filterType: value } })
               }
             >
               <SelectTrigger className="flex-1">
@@ -187,7 +196,6 @@ export default function TransactionsPage() {
         ) : (
           <div className="space-y-4">
             {filteredTransactions.map((transaction) => {
-              const account = accounts.find(account=> account.id === transaction.accountId)
               return (
                 <Card key={transaction.id}>
                   <CardContent className="pt-0">
@@ -199,11 +207,11 @@ export default function TransactionsPage() {
                           </h3>
                           <div className="flex items-center gap-1">
                             <p className="text-sm text-muted-foreground truncate">
-                              {account?.name}
+                              {transaction.account?.name}
                             </p>
                             <Money
                               amount={transaction.amount}
-                              currency={account!.currency}
+                              currency={transaction.account!.currency}
                               positive={transaction.type === "credit"}
                             />
                           </div>
@@ -255,7 +263,11 @@ export default function TransactionsPage() {
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() =>
-                                    deleteTransaction({data: {id: transaction.id}})
+                                    db.transact(
+                                      db.tx.transactions[
+                                        transaction.id
+                                      ].delete()
+                                    )
                                   }
                                   className="bg-destructive hover:bg-destructive/80"
                                 >
@@ -278,35 +290,52 @@ export default function TransactionsPage() {
   );
 }
 
+const transactionZodSchema = z.object({
+  accountId: z.string(),
+  name: z.string(),
+  amount: z.number(),
+  type: z.enum(["credit", "debit"]),
+  category: z.string(),
+  transactionAt: z.string(),
+});
+type TransactionsFormZodType = z.infer<typeof transactionZodSchema>;
 function TransactionDialog({
   children,
   transaction,
 }: {
   children?: React.ReactNode;
-  transaction?: TransactionSelect;
+  transaction?: ReturnQuery<
+    typeof transactionsWithAccountQuery
+  >["transactions"][number];
 }) {
-  const handleSubmit = (data: TransactionInsert) => {
-    if (transaction) {
-      updateTransaction({data: {
-        ...transaction,
-        id: transaction.id,
-        createdAt: transaction.createdAt,
-        updatedAt: new Date(),
-        ...data,
-    }});
-    } else {
-      const id = uuidv7();
-      createTransaction({data:{
-        ...data,
-        transactionAt: data.transactionAt,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        id,
-      }});
+  const [open, setOpen] = useState(false);
+  const handleSubmit = ({ accountId, ...data }: TransactionsFormZodType) => {
+    try {
+      if (transaction) {
+        db.transact(
+          db.tx.transactions[transaction.id].update({
+            ...transaction,
+            ...data,
+          })
+        );
+      } else {
+        const _id = id();
+        db.transact([
+          db.tx.transactions[_id].create({
+            ...data,
+          }),
+          db.tx.accounts[accountId].link({
+            transactions: _id,
+          }),
+        ]);
+      }
+      setOpen(false);
+    } catch (error) {
+      toast.error(`Failed to create transaction: ${error}`);
     }
   };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children ? (
           children
@@ -327,11 +356,9 @@ function TransactionDialog({
           </DialogTitle>
         </DialogHeader>
         <TransactionForm onSubmit={handleSubmit}>
-          <DialogClose asChild>
-            <Button type="submit" className="flex-1">
-              {transaction ? "Update" : "Create"}
-            </Button>
-          </DialogClose>
+          <Button type="submit" className="flex-1">
+            {transaction ? "Update" : "Create"}
+          </Button>
           <DialogClose asChild>
             <Button type="button" variant="outline" className="flex-1">
               Cancel
@@ -347,19 +374,28 @@ function TransactionForm({
   onSubmit,
   children,
 }: {
-  onSubmit: (data: TransactionInsert) => void;
+  onSubmit: (data: TransactionsFormZodType) => void;
   children?: React.ReactNode;
 }) {
-  const form = useForm<TransactionInsert>({
+  const categories = use$(categories$);
+
+  const form = useForm({
+    resolver: zodResolver(transactionZodSchema),
     defaultValues: {
+      accountId: "",
       name: "",
       amount: 0,
       type: "credit",
       category: "",
-      transactionAt: new Date(),
-    },
+      transactionAt: new Date().toISOString(),
+    } as TransactionsFormZodType,
   });
-  const accounts = use(getAccounts());
+
+  const { data } = db.useQuery(accountsQuery);
+  const accounts = data?.accounts || [];
+
+  const type = form.watch("type");
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -374,7 +410,7 @@ function TransactionForm({
                   <SelectValue placeholder="Select account" />
                 </SelectTrigger>
                 <SelectContent>
-                  {Object.values(accounts).map((account) => (
+                  {accounts.map((account) => (
                     <SelectItem key={account.id} value={account.id}>
                       {account.name} ({account.currency})
                     </SelectItem>
@@ -410,9 +446,12 @@ function TransactionForm({
               <FormLabel>Amount</FormLabel>
               <Input
                 {...field}
+                onChange={(e) => field.onChange(Number(e.target.value))}
+                value={Number(field.value)}
                 type="number"
                 placeholder="0.00"
                 inputMode="decimal"
+                pattern="^[0-9]*\.?[0-9]*$"
                 min={0}
               />
               <FormDescription>
@@ -457,7 +496,7 @@ function TransactionForm({
                     <SelectValue placeholder="Select category" />
                   </SelectTrigger>
                   <SelectContent>
-                    {categories.map((category) => (
+                    {categories[type].map((category) => (
                       <SelectItem key={category} value={category}>
                         {category}
                       </SelectItem>
@@ -483,8 +522,12 @@ function TransactionForm({
                 <Calendar
                   className="w-full"
                   mode="single"
-                  selected={field.value}
-                  onSelect={field.onChange}
+                  selected={new Date(field.value)}
+                  onSelect={(value) => {
+                    if (value) {
+                      field.onChange(value.toISOString());
+                    }
+                  }}
                 />
               </FormControl>
               <FormDescription>

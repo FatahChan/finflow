@@ -1,57 +1,39 @@
 // src/routes/index.tsx
-import { createFileRoute, Link } from "@tanstack/react-router";
-
-export const Route = createFileRoute("/_protected/")({
-  component: HomePage,
-  loader: async () => {
-    const accounts = await getAccounts();
-    const transactions = await getTransactions();
-    return { transactions, accounts };
-  }});
+import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Money } from "@/components/ui/money";
 import { Badge } from "@/components/ui/badge";
-import {  useMemo } from "react";
-import type { TransactionSelect } from "@/db/type";
-import { getAccounts } from "@/actions/transaction-account";
-import { getTransactions } from "@/actions/transaction";
+import { db } from "@/lib/instant-db";
+import { transactionsWithAccountQuery } from "@/instant.queries";
+import { use$, useObservable } from "@legendapp/state/react";
+import { currencies$, defaultCurrency$ } from "@/lib/legend-state";
 
-const calculateAccountBalance = (
-  accountId: string,
-  transactions: TransactionSelect[]
-) => {
-  return transactions
-    .filter((t) => t.accountId === accountId)
-    .reduce((balance, transaction) => {
-      return transaction.type === "credit"
-        ? balance + transaction.amount
-        : balance - transaction.amount;
-    }, 0);
-};
+export const Route = createFileRoute("/_protected/")({
+  component: HomePage,
+});
 
 export default function HomePage() {
-  const { transactions, accounts } = Route.useLoaderData();
+  const { data } = db.useQuery(transactionsWithAccountQuery);
+  const transactions = data?.transactions;
 
-  const totalBalance = useMemo(
-    () =>
-      Object.values(accounts).reduce((total, account) => {
-        return total + calculateAccountBalance(account.id, transactions);
-      }, 0),
-    [accounts, transactions]
-  );
-
-  const recentTransactions = useMemo(() => {
-    return Object.values(transactions)
-      .sort(
-        (a, b) =>
-          new Date(b.transactionAt).getTime() -
-          new Date(a.transactionAt).getTime()
-      )
-      .slice(0, 5);
-  }, [transactions]);
+  const exchangeRate = use$(currencies$.exchangeRates.get());
+  const defaultCurrency = use$(defaultCurrency$.get());
+  const totalBalance$ = useObservable(() => {
+    if (!transactions) return 0;
+    return transactions.reduce((acc, transaction) => {
+      if (transaction.account?.currency === defaultCurrency) {
+        return acc + transaction.amount;
+      } else {
+        return (
+          acc + transaction.amount * exchangeRate[transaction.account!.currency]
+        );
+      }
+    }, 0);
+  });
+  const totalBalance = use$(totalBalance$);
 
   return (
     <div className="min-h-screen bg-background pb-20">
@@ -71,7 +53,7 @@ export default function HomePage() {
               <p className="text-sm text-muted-foreground mb-2">
                 Total Balance
               </p>
-              <Money amount={totalBalance} currency="USD" />
+              <Money amount={totalBalance} currency={defaultCurrency} />
             </div>
           </CardContent>
         </Card>
@@ -90,7 +72,7 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {recentTransactions.length === 0 ? (
+        {!transactions || transactions.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center">
               <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
@@ -102,10 +84,7 @@ export default function HomePage() {
           </Card>
         ) : (
           <div className="space-y-3">
-            {recentTransactions.map((transaction) => {
-              const account = Object.values(accounts).find(
-                (a) => a.id === transaction.accountId
-              );
+            {transactions.slice(0, 3).map((transaction) => {
               return (
                 <Card key={transaction.id}>
                   <CardContent className="pt-0">
@@ -117,11 +96,11 @@ export default function HomePage() {
                           </h3>
                           <div className="flex items-center gap-1">
                             <p className="text-sm text-muted-foreground truncate">
-                              {account?.name}
+                              {transaction.account?.name}
                             </p>
                             <Money
                               amount={transaction.amount}
-                              currency={account!.currency}
+                              currency={transaction.account!.currency}
                               positive={transaction.type === "credit"}
                             />
                           </div>

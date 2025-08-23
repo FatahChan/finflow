@@ -1,6 +1,4 @@
-import { getTransactions } from "@/actions/transaction";
-import { getAccounts } from "@/actions/transaction-account";
-import { authClient } from "@/lib/auth-client";
+import { db } from "@/lib/instant-db";
 import {
   createFileRoute,
   Link,
@@ -8,26 +6,19 @@ import {
   redirect,
 } from "@tanstack/react-router";
 import { Plus, TrendingUp, Wallet } from "lucide-react";
-import { Suspense, use } from "react";
+import { Suspense } from "react";
 
 export const Route = createFileRoute("/_protected")({
   beforeLoad: async () => {
-    const session = await authClient.getSession();
-    console.log(session);
-    if (!session.data) {
+    const user = await db.getAuth();
+    if (!user) {
       throw redirect({ to: "/login" });
     }
-  },
-  loader: async () => {
-    const accounts = await getAccounts();
-    const transactions = await getTransactions();
-    return { accounts, transactions };
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
- Route.useLoaderData()
   return (
     <>
       <Suspense>

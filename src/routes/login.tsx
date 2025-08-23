@@ -1,13 +1,13 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
-import { Button } from "@/components/ui/button";
+import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Wallet } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { db } from "@/lib/instant-db";
+import { GoogleLoginButton } from "@/components/google-login";
 
 export const Route = createFileRoute("/login")({
   beforeLoad: async () => {
-    const session = await authClient.getSession();
-    if (session.data) {
+    const user = await db.getAuth();
+    if (user) {
       throw redirect({ to: "/" });
     }
   },
@@ -30,17 +30,19 @@ function LoginPage() {
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <Button
-            onClick={() => authClient.signIn.social({ provider: "google" })}
-            className="w-full flex items-center justify-center space-x-2 bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
-          >
-            <span>Continue with Google</span>
-          </Button>
-
+          <span className="flex items-center justify-center">
+            <GoogleLoginButton />
+          </span>
           <div className="text-center text-sm text-gray-500 mt-6">
             <p>
-              By signing in, you agree to our Terms of Service and Privacy
-              Policy
+              By signing in, you agree to our{" "}
+              <Link to="/terms" className="text-blue-600 hover:text-blue-800 underline">
+                Terms of Service
+              </Link>{" "}
+              and{" "}
+              <Link to="/privacy" className="text-blue-600 hover:text-blue-800 underline">
+                Privacy Policy
+              </Link>
             </p>
           </div>
         </CardContent>
