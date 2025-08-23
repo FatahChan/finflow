@@ -467,8 +467,8 @@ function TransactionForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Type</FormLabel>
-              <Select {...field}>
-                <SelectTrigger className="w-full">
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <SelectTrigger className="w-full" onBlur={field.onBlur}>
                   <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent>

@@ -25,13 +25,14 @@ export default function HomePage() {
   const totalBalance$ = useMemo(() => {
     if (!transactions || isLoading) return 0;
     return transactions.reduce((acc, transaction) => {
-      if (transaction.account?.currency === defaultCurrency) {
+      const account = Array.isArray(transaction.account)
+        ? transaction.account[0]
+        : transaction.account;
+
+      if (account?.currency === defaultCurrency) {
         return acc + transaction.amount;
       } else {
-        return (
-          acc +
-          transaction.amount * exchangeRates[transaction.account!.currency]
-        );
+        return acc + transaction.amount * exchangeRates[account!.currency];
       }
     }, 0);
   }, [transactions, isLoading, defaultCurrency, exchangeRates]);
