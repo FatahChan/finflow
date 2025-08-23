@@ -18,17 +18,17 @@ export const Route = createFileRoute("/_protected/")({
 export default function HomePage() {
   const { data } = db.useQuery(transactionsWithAccountQuery);
   const transactions = data?.transactions;
-
-  const exchangeRate = use$(currencies$.exchangeRates.get());
   const defaultCurrency = use$(defaultCurrency$.get());
   const totalBalance$ = useObservable(() => {
     if (!transactions) return 0;
+    const exchangeRates = currencies$.exchangeRates.get();
     return transactions.reduce((acc, transaction) => {
       if (transaction.account?.currency === defaultCurrency) {
         return acc + transaction.amount;
       } else {
         return (
-          acc + transaction.amount * exchangeRate[transaction.account!.currency]
+          acc +
+          transaction.amount * exchangeRates[transaction.account!.currency]
         );
       }
     }, 0);
