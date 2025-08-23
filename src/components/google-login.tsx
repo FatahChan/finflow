@@ -1,17 +1,33 @@
 "use client";
 
 import { useState } from "react";
-import { init } from "@instantdb/react";
 import { GoogleOAuthProvider, GoogleLogin } from "@react-oauth/google";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-
-const APP_ID = "e772f383-a74f-4430-ad40-46231804e3f3";
-
-const db = init({ appId: APP_ID });
+import * as jose from "jose";
+import { db } from "@/lib/instant-db";
+import { id } from "@instantdb/react";
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
 const GOOGLE_CLIENT_NAME = import.meta.env.VITE_GOOGLE_CLIENT_NAME;
+
+type jwtDecoded = Partial<{
+  iss: string;
+  azp: string;
+  aud: string;
+  sub: string;
+  email: string;
+  email_verified: boolean;
+  nonce: string;
+  nbf: number;
+  name: string;
+  picture: string;
+  given_name: string;
+  family_name: string;
+  iat: number;
+  exp: number;
+  jti: string;
+}>;
 
 export function GoogleLoginButton() {
   const [nonce] = useState(crypto.randomUUID());
@@ -23,11 +39,25 @@ export function GoogleLoginButton() {
         nonce={nonce}
         onError={() => toast.error("Login failed")}
         onSuccess={({ credential }) => {
+          const jwt: jwtDecoded = jose.decodeJwt(credential!);
           db.auth
             .signInWithIdToken({
               clientName: GOOGLE_CLIENT_NAME,
               idToken: credential!,
               nonce,
+            })
+            .then(() => db.getAuth())
+            .then((auth) => {
+              const _id = id();
+              db.transact([
+                db.tx.profiles[_id].create({
+                  name: jwt.name,
+                  picture: jwt.picture,
+                }),
+                db.tx.profiles[_id].link({
+                  user: auth!.id,
+                }),
+              ]);
             })
             .then(() => navigate({ to: "/" }))
             .catch((err) => {

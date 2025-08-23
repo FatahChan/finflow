@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 
 import type React from "react";
 
@@ -24,14 +24,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ArrowLeft, Edit, Plus, Trash2 } from "lucide-react";
+import { Edit, Plus, Trash2 } from "lucide-react";
 
 import { Wallet } from "lucide-react";
 import { Money } from "@/components/ui/money";
@@ -51,15 +44,24 @@ import {
   accountsWithTransactionsQuery,
   type ReturnQuery,
 } from "@/instant.queries";
-import { use$ } from "@legendapp/state/react";
 import z from "zod";
 import { id } from "@instantdb/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { currencies$ } from "@/lib/legend-state";
+import { currencies, type Currency } from "@/lib/legend-state";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Header } from "@/components/header";
+import { NavigationDrawer } from "@/components/navigation-drawer";
+import { NativeSelect } from "@/components/ui/native-select";
 
 export const Route = createFileRoute("/_protected/accounts")({
   component: AccountsPage,
+  head: () => ({
+    meta: [
+      {
+        title: "Accounts | FinFlow",
+      },
+    ],
+  }),
 });
 
 export default function AccountsPage() {
@@ -81,24 +83,23 @@ export default function AccountsPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-card border-b px-4 py-4">
-        <div className="flex items-center space-x-4">
-          <Link to="/">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <div className="flex-1">
-            <h1 className="text-xl font-semibold text-foreground">Accounts</h1>
-          </div>
-          <AccountDialog>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-1" />
-              Add
-            </Button>
-          </AccountDialog>
-        </div>
-      </div>
+      <Header
+        title="Accounts"
+        backButton
+        actions={
+          <>
+            {accounts?.length === 0 ? null : (
+              <AccountDialog>
+                <Button size="sm">
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+              </AccountDialog>
+            )}
+            <NavigationDrawer />
+          </>
+        }
+      />
 
       {/* Accounts List */}
       <div className="px-4 py-6">
@@ -270,7 +271,6 @@ function AccountForm({
   onSubmit: (data: AccountZodType) => void;
   children: React.ReactNode;
 }) {
-  const currencies = use$(currencies$.currencies.get());
   const form = useForm<AccountZodType>({
     resolver: zodResolver(accountZodSchema),
     defaultValues: {
@@ -306,20 +306,19 @@ function AccountForm({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Currency</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger className="w-full">
-                    <SelectValue />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {currencies.map((currency) => (
-                    <SelectItem key={currency} value={currency}>
-                      {currency}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <NativeSelect
+                value={field.value}
+                onChange={(e) => {
+                  field.onChange(e.target.value as Currency);
+                }}
+                className="w-full uppercase"
+              >
+                {currencies.map((currency) => (
+                  <option key={currency} value={currency}>
+                    {currency.toUpperCase()}
+                  </option>
+                ))}
+              </NativeSelect>
               <FormDescription>Select your account currency</FormDescription>
               <FormMessage />
             </FormItem>

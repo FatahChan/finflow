@@ -8,6 +8,20 @@ const rules = {
       $default: "false",
     },
   },
+  profiles: {
+    bind: [
+      "isOwner",
+      "auth.id != null && data.ref('user.id') == auth.ref('$user.id')",
+      "isSameUser",
+      "newData.user == data.user",
+    ],
+    allow: {
+      view: "isOwner",
+      create: "isOwner",
+      delete: "isOwner",
+      update: "isOwner && isSameUser",
+    },
+  },
   accounts: {
     bind: [
       "isOwner",

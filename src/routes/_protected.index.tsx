@@ -9,11 +9,24 @@ import { Badge } from "@/components/ui/badge";
 import { db } from "@/lib/instant-db";
 import { transactionsWithAccountQuery } from "@/instant.queries";
 import { use$ } from "@legendapp/state/react";
-import { currencies$, defaultCurrency$ } from "@/lib/legend-state";
+import {
+  currencies$,
+  currencyValidator,
+  defaultCurrency$,
+} from "@/lib/legend-state";
 import { useMemo } from "react";
+import { NavigationDrawer } from "@/components/navigation-drawer";
+import { Header } from "@/components/header";
 
 export const Route = createFileRoute("/_protected/")({
   component: HomePage,
+  head: () => ({
+    meta: [
+      {
+        title: "Home | FinFlow",
+      },
+    ],
+  }),
 });
 
 export default function HomePage() {
@@ -29,10 +42,11 @@ export default function HomePage() {
         ? transaction.account[0]
         : transaction.account;
 
+      const currency = currencyValidator.parse(account!.currency);
       if (account?.currency === defaultCurrency) {
         return acc + transaction.amount;
       } else {
-        return acc + transaction.amount * exchangeRates[account!.currency];
+        return acc + transaction.amount * exchangeRates[currency];
       }
     }, 0);
   }, [transactions, isLoading, defaultCurrency, exchangeRates]);
@@ -41,12 +55,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-card border-b px-4 py-6">
-        <h1 className="text-2xl font-bold text-foreground">FinFlow</h1>
-        <p className="text-muted-foreground mt-1">
-          Track your accounts and transactions
-        </p>
-      </div>
+      <Header title="FinFlow" actions={<NavigationDrawer />} />
 
       {/* Total Balance */}
       <div className="px-4 py-6">

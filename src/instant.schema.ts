@@ -15,6 +15,10 @@ const _schema = i.schema({
       currency: i.string(),
       name: i.string(),
     }),
+    profiles: i.entity({
+      name: i.string().optional(),
+      picture: i.string().optional(),
+    }),
     transactions: i.entity({
       amount: i.number(),
       category: i.string(),
@@ -24,6 +28,10 @@ const _schema = i.schema({
     }),
   },
   links: {
+    userProfiles: {
+      forward: { on: 'profiles', has: 'one', label: 'user', required: true, onDelete: "cascade" },
+      reverse: { on: '$users', has: 'one', label: 'profile', required: true, onDelete: "cascade" },
+    },
     accountsUser: {
       forward: {
         on: "accounts",

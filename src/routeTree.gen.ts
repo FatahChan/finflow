@@ -15,7 +15,9 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as ProtectedIndexRouteImport } from './routes/_protected.index'
 import { Route as ProtectedTransactionsRouteImport } from './routes/_protected.transactions'
+import { Route as ProtectedSettingsRouteImport } from './routes/_protected.settings'
 import { Route as ProtectedAccountsRouteImport } from './routes/_protected.accounts'
+import { Route as ProtectedAboutRouteImport } from './routes/_protected.about'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -46,9 +48,19 @@ const ProtectedTransactionsRoute = ProtectedTransactionsRouteImport.update({
   path: '/transactions',
   getParentRoute: () => ProtectedRoute,
 } as any)
+const ProtectedSettingsRoute = ProtectedSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ProtectedRoute,
+} as any)
 const ProtectedAccountsRoute = ProtectedAccountsRouteImport.update({
   id: '/accounts',
   path: '/accounts',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedAboutRoute = ProtectedAboutRouteImport.update({
+  id: '/about',
+  path: '/about',
   getParentRoute: () => ProtectedRoute,
 } as any)
 
@@ -56,7 +68,9 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/about': typeof ProtectedAboutRoute
   '/accounts': typeof ProtectedAccountsRoute
+  '/settings': typeof ProtectedSettingsRoute
   '/transactions': typeof ProtectedTransactionsRoute
   '/': typeof ProtectedIndexRoute
 }
@@ -64,7 +78,9 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/about': typeof ProtectedAboutRoute
   '/accounts': typeof ProtectedAccountsRoute
+  '/settings': typeof ProtectedSettingsRoute
   '/transactions': typeof ProtectedTransactionsRoute
   '/': typeof ProtectedIndexRoute
 }
@@ -74,7 +90,9 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
+  '/_protected/about': typeof ProtectedAboutRoute
   '/_protected/accounts': typeof ProtectedAccountsRoute
+  '/_protected/settings': typeof ProtectedSettingsRoute
   '/_protected/transactions': typeof ProtectedTransactionsRoute
   '/_protected/': typeof ProtectedIndexRoute
 }
@@ -84,18 +102,30 @@ export interface FileRouteTypes {
     | '/login'
     | '/privacy'
     | '/terms'
+    | '/about'
     | '/accounts'
+    | '/settings'
     | '/transactions'
     | '/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/login' | '/privacy' | '/terms' | '/accounts' | '/transactions' | '/'
+  to:
+    | '/login'
+    | '/privacy'
+    | '/terms'
+    | '/about'
+    | '/accounts'
+    | '/settings'
+    | '/transactions'
+    | '/'
   id:
     | '__root__'
     | '/_protected'
     | '/login'
     | '/privacy'
     | '/terms'
+    | '/_protected/about'
     | '/_protected/accounts'
+    | '/_protected/settings'
     | '/_protected/transactions'
     | '/_protected/'
   fileRoutesById: FileRoutesById
@@ -151,6 +181,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedTransactionsRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/settings': {
+      id: '/_protected/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof ProtectedSettingsRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
     '/_protected/accounts': {
       id: '/_protected/accounts'
       path: '/accounts'
@@ -158,17 +195,28 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ProtectedAccountsRouteImport
       parentRoute: typeof ProtectedRoute
     }
+    '/_protected/about': {
+      id: '/_protected/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof ProtectedAboutRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
   }
 }
 
 interface ProtectedRouteChildren {
+  ProtectedAboutRoute: typeof ProtectedAboutRoute
   ProtectedAccountsRoute: typeof ProtectedAccountsRoute
+  ProtectedSettingsRoute: typeof ProtectedSettingsRoute
   ProtectedTransactionsRoute: typeof ProtectedTransactionsRoute
   ProtectedIndexRoute: typeof ProtectedIndexRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedAboutRoute: ProtectedAboutRoute,
   ProtectedAccountsRoute: ProtectedAccountsRoute,
+  ProtectedSettingsRoute: ProtectedSettingsRoute,
   ProtectedTransactionsRoute: ProtectedTransactionsRoute,
   ProtectedIndexRoute: ProtectedIndexRoute,
 }

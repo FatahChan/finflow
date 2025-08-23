@@ -2,7 +2,7 @@ import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { ArrowLeft, Plus, Edit, Trash2, TrendingUp } from "lucide-react";
+import { Plus, Edit, Trash2, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -59,6 +59,8 @@ import { use$ } from "@legendapp/state/react";
 import { categories$ } from "@/lib/legend-state";
 import { useState } from "react";
 import { toast } from "sonner";
+import { Header } from "@/components/header";
+import { NavigationDrawer } from "@/components/navigation-drawer";
 
 const searchSchema = z.object({
   filterAccount: z.string().default("all").catch("all"),
@@ -68,6 +70,13 @@ const searchSchema = z.object({
 export const Route = createFileRoute("/_protected/transactions")({
   validateSearch: zodValidator(searchSchema),
   component: TransactionsPage,
+  head: () => ({
+    meta: [
+      {
+        title: "Transactions | FinFlow",
+      },
+    ],
+  }),
 });
 
 export default function TransactionsPage() {
@@ -94,27 +103,23 @@ export default function TransactionsPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <div className="bg-card border-b px-4 py-4">
-        <div className="flex items-center space-x-4">
-          <Link to="/">
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="h-5 w-5" />
-            </Button>
-          </Link>
-          <div className="flex-1">
-            <h1 className="text-xl font-semibold text-foreground">
-              Transactions
-            </h1>
-          </div>
-
-          <TransactionDialog>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-1" />
-              Add
-            </Button>
-          </TransactionDialog>
-        </div>
-      </div>
+      <Header
+        title="Transactions"
+        backButton
+        actions={
+          <>
+            {filteredTransactions.length === 0 ? null : (
+              <TransactionDialog>
+                <Button size="sm">
+                  <Plus className="h-4 w-4 mr-1" />
+                  Add
+                </Button>
+              </TransactionDialog>
+            )}
+            <NavigationDrawer />
+          </>
+        }
+      />
 
       {/* Filters */}
       {accounts.length > 0 && !isLoading && (
