@@ -28,3 +28,4 @@ dist-ssr
 .nitro
 .output
 .vercel
+dev-dist

@@ -21,6 +21,7 @@ interface PWAInstallContextValue {
   supported: () => boolean;
   isInstalled: () => boolean;
   pwaInstall: (options?: PWAInstallOptions) => Promise<void>;
+  isCaptured: boolean;
 }
 
 interface AwaitingPromise {
@@ -32,6 +33,7 @@ const ReactPWAInstallContext = createContext<PWAInstallContextValue>({
   supported: () => false,
   isInstalled: () => false,
   pwaInstall: () => Promise.reject(),
+  isCaptured: false,
 });
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -140,6 +142,7 @@ export const ReactPWAInstallProvider = ({
     supported,
     isInstalled,
     pwaInstall: openDialog,
+    isCaptured: false,
   });
 
   useEffect(() => {
@@ -154,6 +157,7 @@ export const ReactPWAInstallProvider = ({
           supported,
           isInstalled,
           pwaInstall: openDialog,
+          isCaptured: true,
         });
       },
       { signal: abortController.signal }

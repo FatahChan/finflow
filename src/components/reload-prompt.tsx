@@ -9,11 +9,12 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import { useReactPWAInstall } from "./pwa-install";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { toast } from "sonner";
 
 function ReloadPrompt() {
-  const { pwaInstall, supported, isInstalled } = useReactPWAInstall();
+  const { pwaInstall, supported, isInstalled, isCaptured } =
+    useReactPWAInstall();
 
   const {
     offlineReady: [offlineReady, setOfflineReady],
@@ -25,6 +26,12 @@ function ReloadPrompt() {
     },
     onRegisterError(error) {
       console.log("SW registration error", error);
+    },
+    onOfflineReady() {
+      setOfflineReady(true);
+    },
+    onNeedRefresh() {
+      setNeedRefresh(true);
     },
   });
 
@@ -55,8 +62,14 @@ function ReloadPrompt() {
       .catch(() => toast.error("User opted out from installing"));
   }, [pwaInstall]);
 
+  useEffect(() => {
+    console.log("offlineReady", offlineReady);
+    console.log("needRefresh", needRefresh);
+    console.log("isCaptured", isCaptured);
+  }, [offlineReady, needRefresh, isCaptured]);
+
   return (
-    <AlertDialog open={offlineReady || needRefresh}>
+    <AlertDialog open={offlineReady || needRefresh || isCaptured}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
