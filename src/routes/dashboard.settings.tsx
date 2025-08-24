@@ -32,7 +32,7 @@ import { useIsOnline } from "react-use-is-online";
 import { deleteUser } from "@/actions/delete-user";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/_protected/settings")({
+export const Route = createFileRoute("/dashboard/settings")({
   component: SettingsPage,
   head: () => ({
     meta: [

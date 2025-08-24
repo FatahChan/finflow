@@ -12,12 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as ProtectedRouteImport } from './routes/_protected'
-import { Route as ProtectedIndexRouteImport } from './routes/_protected.index'
-import { Route as ProtectedTransactionsRouteImport } from './routes/_protected.transactions'
-import { Route as ProtectedSettingsRouteImport } from './routes/_protected.settings'
-import { Route as ProtectedAccountsRouteImport } from './routes/_protected.accounts'
-import { Route as ProtectedAboutRouteImport } from './routes/_protected.about'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as DashboardIndexRouteImport } from './routes/dashboard.index'
+import { Route as DashboardTransactionsRouteImport } from './routes/dashboard.transactions'
+import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
+import { Route as DashboardAccountsRouteImport } from './routes/dashboard.accounts'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -34,104 +34,108 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProtectedRoute = ProtectedRouteImport.update({
-  id: '/_protected',
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProtectedIndexRoute = ProtectedIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ProtectedRoute,
-} as any)
-const ProtectedTransactionsRoute = ProtectedTransactionsRouteImport.update({
-  id: '/transactions',
-  path: '/transactions',
-  getParentRoute: () => ProtectedRoute,
-} as any)
-const ProtectedSettingsRoute = ProtectedSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => ProtectedRoute,
-} as any)
-const ProtectedAccountsRoute = ProtectedAccountsRouteImport.update({
-  id: '/accounts',
-  path: '/accounts',
-  getParentRoute: () => ProtectedRoute,
-} as any)
-const ProtectedAboutRoute = ProtectedAboutRouteImport.update({
+const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => ProtectedRoute,
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardIndexRoute = DashboardIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardTransactionsRoute = DashboardTransactionsRouteImport.update({
+  id: '/transactions',
+  path: '/transactions',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardSettingsRoute = DashboardSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => DashboardRoute,
+} as any)
+const DashboardAccountsRoute = DashboardAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => DashboardRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/about': typeof ProtectedAboutRoute
-  '/accounts': typeof ProtectedAccountsRoute
-  '/settings': typeof ProtectedSettingsRoute
-  '/transactions': typeof ProtectedTransactionsRoute
-  '/': typeof ProtectedIndexRoute
+  '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRoutesByTo {
+  '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/about': typeof ProtectedAboutRoute
-  '/accounts': typeof ProtectedAccountsRoute
-  '/settings': typeof ProtectedSettingsRoute
-  '/transactions': typeof ProtectedTransactionsRoute
-  '/': typeof ProtectedIndexRoute
+  '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/dashboard': typeof DashboardIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/_protected': typeof ProtectedRouteWithChildren
+  '/about': typeof AboutRoute
+  '/dashboard': typeof DashboardRouteWithChildren
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
-  '/_protected/about': typeof ProtectedAboutRoute
-  '/_protected/accounts': typeof ProtectedAccountsRoute
-  '/_protected/settings': typeof ProtectedSettingsRoute
-  '/_protected/transactions': typeof ProtectedTransactionsRoute
-  '/_protected/': typeof ProtectedIndexRoute
+  '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/settings': typeof DashboardSettingsRoute
+  '/dashboard/transactions': typeof DashboardTransactionsRoute
+  '/dashboard/': typeof DashboardIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/about'
+    | '/dashboard'
     | '/login'
     | '/privacy'
     | '/terms'
-    | '/about'
-    | '/accounts'
-    | '/settings'
-    | '/transactions'
-    | '/'
+    | '/dashboard/accounts'
+    | '/dashboard/settings'
+    | '/dashboard/transactions'
+    | '/dashboard/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/about'
     | '/login'
     | '/privacy'
     | '/terms'
-    | '/about'
-    | '/accounts'
-    | '/settings'
-    | '/transactions'
-    | '/'
+    | '/dashboard/accounts'
+    | '/dashboard/settings'
+    | '/dashboard/transactions'
+    | '/dashboard'
   id:
     | '__root__'
-    | '/_protected'
+    | '/about'
+    | '/dashboard'
     | '/login'
     | '/privacy'
     | '/terms'
-    | '/_protected/about'
-    | '/_protected/accounts'
-    | '/_protected/settings'
-    | '/_protected/transactions'
-    | '/_protected/'
+    | '/dashboard/accounts'
+    | '/dashboard/settings'
+    | '/dashboard/transactions'
+    | '/dashboard/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  ProtectedRoute: typeof ProtectedRouteWithChildren
+  AboutRoute: typeof AboutRoute
+  DashboardRoute: typeof DashboardRouteWithChildren
   LoginRoute: typeof LoginRoute
   PrivacyRoute: typeof PrivacyRoute
   TermsRoute: typeof TermsRoute
@@ -160,73 +164,72 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_protected': {
-      id: '/_protected'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof ProtectedRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_protected/': {
-      id: '/_protected/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof ProtectedIndexRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
-    '/_protected/transactions': {
-      id: '/_protected/transactions'
-      path: '/transactions'
-      fullPath: '/transactions'
-      preLoaderRoute: typeof ProtectedTransactionsRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
-    '/_protected/settings': {
-      id: '/_protected/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof ProtectedSettingsRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
-    '/_protected/accounts': {
-      id: '/_protected/accounts'
-      path: '/accounts'
-      fullPath: '/accounts'
-      preLoaderRoute: typeof ProtectedAccountsRouteImport
-      parentRoute: typeof ProtectedRoute
-    }
-    '/_protected/about': {
-      id: '/_protected/about'
+    '/about': {
+      id: '/about'
       path: '/about'
       fullPath: '/about'
-      preLoaderRoute: typeof ProtectedAboutRouteImport
-      parentRoute: typeof ProtectedRoute
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard/': {
+      id: '/dashboard/'
+      path: '/'
+      fullPath: '/dashboard/'
+      preLoaderRoute: typeof DashboardIndexRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/transactions': {
+      id: '/dashboard/transactions'
+      path: '/transactions'
+      fullPath: '/dashboard/transactions'
+      preLoaderRoute: typeof DashboardTransactionsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/settings': {
+      id: '/dashboard/settings'
+      path: '/settings'
+      fullPath: '/dashboard/settings'
+      preLoaderRoute: typeof DashboardSettingsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
+    '/dashboard/accounts': {
+      id: '/dashboard/accounts'
+      path: '/accounts'
+      fullPath: '/dashboard/accounts'
+      preLoaderRoute: typeof DashboardAccountsRouteImport
+      parentRoute: typeof DashboardRoute
     }
   }
 }
 
-interface ProtectedRouteChildren {
-  ProtectedAboutRoute: typeof ProtectedAboutRoute
-  ProtectedAccountsRoute: typeof ProtectedAccountsRoute
-  ProtectedSettingsRoute: typeof ProtectedSettingsRoute
-  ProtectedTransactionsRoute: typeof ProtectedTransactionsRoute
-  ProtectedIndexRoute: typeof ProtectedIndexRoute
+interface DashboardRouteChildren {
+  DashboardAccountsRoute: typeof DashboardAccountsRoute
+  DashboardSettingsRoute: typeof DashboardSettingsRoute
+  DashboardTransactionsRoute: typeof DashboardTransactionsRoute
+  DashboardIndexRoute: typeof DashboardIndexRoute
 }
 
-const ProtectedRouteChildren: ProtectedRouteChildren = {
-  ProtectedAboutRoute: ProtectedAboutRoute,
-  ProtectedAccountsRoute: ProtectedAccountsRoute,
-  ProtectedSettingsRoute: ProtectedSettingsRoute,
-  ProtectedTransactionsRoute: ProtectedTransactionsRoute,
-  ProtectedIndexRoute: ProtectedIndexRoute,
+const DashboardRouteChildren: DashboardRouteChildren = {
+  DashboardAccountsRoute: DashboardAccountsRoute,
+  DashboardSettingsRoute: DashboardSettingsRoute,
+  DashboardTransactionsRoute: DashboardTransactionsRoute,
+  DashboardIndexRoute: DashboardIndexRoute,
 }
 
-const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
-  ProtectedRouteChildren,
+const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
+  DashboardRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
-  ProtectedRoute: ProtectedRouteWithChildren,
+  AboutRoute: AboutRoute,
+  DashboardRoute: DashboardRouteWithChildren,
   LoginRoute: LoginRoute,
   PrivacyRoute: PrivacyRoute,
   TermsRoute: TermsRoute,

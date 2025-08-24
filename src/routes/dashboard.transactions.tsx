@@ -61,7 +61,7 @@ const searchSchema = z.object({
   filterType: z.enum(["all", "credit", "debit"]).default("all").catch("all"),
 });
 
-export const Route = createFileRoute("/_protected/transactions")({
+export const Route = createFileRoute("/dashboard/transactions")({
   validateSearch: zodValidator(searchSchema),
   component: TransactionsPage,
   head: () => ({
@@ -163,7 +163,7 @@ export default function TransactionsPage() {
               <p className="text-muted-foreground mb-6">
                 You need to create an account first before adding transactions
               </p>
-              <Link to="/accounts">
+              <Link to="/dashboard/accounts">
                 <Button>Create Account</Button>
               </Link>
             </CardContent>

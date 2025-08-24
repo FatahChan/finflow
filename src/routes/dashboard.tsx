@@ -8,7 +8,7 @@ import {
 import { HandCoins, Home, Wallet } from "lucide-react";
 import { Suspense } from "react";
 
-export const Route = createFileRoute("/_protected")({
+export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
     const user = await db.getAuth();
     if (!user) {
@@ -21,15 +21,15 @@ export const Route = createFileRoute("/_protected")({
 
 function RouteComponent() {
   return (
-    <>
+    <main className="max-w-4xl mx-auto relative outline-border outline">
       <Suspense>
         <Outlet />
       </Suspense>
       {/* Bottom Navigation */}
-      <div className="fixed bottom-0 left-0 right-0 bg-background border-t">
+      <div className="absolute bottom-0 left-0 right-0 bg-background border-t">
         <div className="grid grid-cols-3 gap-1 p-2">
           <Link
-            to="/"
+            to="/dashboard"
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >
@@ -37,7 +37,7 @@ function RouteComponent() {
             <span className="text-xs font-medium">Home</span>
           </Link>
           <Link
-            to="/accounts"
+            to="/dashboard/accounts"
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >
@@ -45,7 +45,7 @@ function RouteComponent() {
             <span className="text-xs">Accounts</span>
           </Link>
           <Link
-            to="/transactions"
+            to="/dashboard/transactions"
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >
@@ -54,6 +54,6 @@ function RouteComponent() {
           </Link>
         </div>
       </div>
-    </>
+    </main>
   );
 }

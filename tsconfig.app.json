@@ -28,6 +28,10 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
+
+    "types": [
+      "vite-plugin-pwa/client"
+    ]
   },
 "include": ["src/**/*"]
 }

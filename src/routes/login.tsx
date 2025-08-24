@@ -8,7 +8,7 @@ export const Route = createFileRoute("/login")({
   beforeLoad: async () => {
     const user = await db.getAuth();
     if (user) {
-      throw redirect({ to: "/" });
+      throw redirect({ to: "/dashboard" });
     }
   },
   component: LoginPage,

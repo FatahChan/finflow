@@ -5,7 +5,7 @@ import { NavigationDrawer } from "@/components/navigation-drawer";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Heart, Code, Shield } from "lucide-react";
 
-export const Route = createFileRoute("/_protected/about")({
+export const Route = createFileRoute("/about")({
   component: AboutPage,
   head: () => ({
     meta: [
