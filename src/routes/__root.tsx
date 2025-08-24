@@ -8,6 +8,8 @@ import {
 } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "next-themes";
+import { useEffect } from "react";
+import { registerServiceWorker } from "@/lib/sw-register";
 
 export const Route = createRootRoute({
   head: () => ({
@@ -54,6 +56,11 @@ export const Route = createRootRoute({
 });
 
 function RootComponent() {
+  useEffect(() => {
+    // Register service worker on app startup
+    registerServiceWorker();
+  }, []);
+
   return (
     <RootDocument>
       <Outlet />

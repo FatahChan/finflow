@@ -1,4 +1,3 @@
-import { useRegisterSW } from "virtual:pwa-register/react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,32 +12,7 @@ import { useCallback } from "react";
 import { toast } from "sonner";
 
 function ReloadPrompt() {
-  const { pwaInstall, supported, isInstalled, isCaptured } =
-    useReactPWAInstall();
-
-  const {
-    offlineReady: [offlineReady, setOfflineReady],
-    needRefresh: [needRefresh, setNeedRefresh],
-    updateServiceWorker,
-  } = useRegisterSW({
-    onRegistered(r) {
-      console.log("SW Registered: " + r);
-    },
-    onRegisterError(error) {
-      console.log("SW registration error", error);
-    },
-    onOfflineReady() {
-      setOfflineReady(true);
-    },
-    onNeedRefresh() {
-      setNeedRefresh(true);
-    },
-  });
-
-  const close = () => {
-    setOfflineReady(false);
-    setNeedRefresh(false);
-  };
+  const { pwaInstall, supported, isInstalled } = useReactPWAInstall();
 
   const handleInstall = useCallback(() => {
     pwaInstall({
@@ -63,33 +37,16 @@ function ReloadPrompt() {
   }, [pwaInstall]);
 
   return (
-    <AlertDialog
-      defaultOpen={
-        offlineReady ||
-        needRefresh ||
-        isCaptured ||
-        (supported() && !isInstalled())
-      }
-    >
+    <AlertDialog defaultOpen={supported() && !isInstalled()}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            {offlineReady || (!isInstalled() && supported())
-              ? "App ready to work offline"
-              : "New content available"}
-          </AlertDialogTitle>
+          <AlertDialogTitle>App ready to work offline</AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          {needRefresh ? (
-            <AlertDialogAction onClick={() => updateServiceWorker(true)}>
-              Reload
-            </AlertDialogAction>
-          ) : offlineReady || (!isInstalled() && supported()) ? (
-            <AlertDialogAction onClick={() => handleInstall()}>
-              Install
-            </AlertDialogAction>
-          ) : null}
+          <AlertDialogAction onClick={() => handleInstall()}>
+            Install
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>
