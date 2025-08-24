@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/FatahChan/finflow/compare/0.7.0...0.7.1) (2025-08-24)
+
+
+### Bug Fixes
+
+* redirect unauthenticated users to home page instead of login ([879ceb4](https://github.com/FatahChan/finflow/commit/879ceb4dbf9104dfcb0bfb9bfc2897b3afbdf911))
+
 # [0.7.0](https://github.com/FatahChan/finflow/compare/0.6.0...0.7.0) (2025-08-24)
 
 
