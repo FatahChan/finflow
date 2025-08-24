@@ -318,21 +318,19 @@ function TransactionDialog({
   >["transactions"][number];
 }) {
   const [open, setOpen] = useState(false);
-  const handleSubmit = ({ accountId, ...data }: TransactionsFormZodType) => {
-    console.log(accountId);
-    console.log(data);
 
+  const handleSubmit = ({ accountId, ...data }: TransactionsFormZodType) => {
     try {
       if (transaction) {
+        const { account: _, ...transactionProps } = transaction ?? {};
         db.transact(
           db.tx.transactions[transaction.id].update({
-            ...transaction,
+            ...transactionProps,
             ...data,
           })
         );
       } else {
         const _id = id();
-        console.log(accountId);
         db.transact([
           db.tx.transactions[_id].create({
             ...data,
@@ -435,7 +433,6 @@ function TransactionForm({
               <FormLabel>Account</FormLabel>
               <NativeSelect
                 onChange={(e) => {
-                  console.log(e.target.value);
                   field.onChange(e.target.value);
                 }}
                 value={field.value}
@@ -479,7 +476,7 @@ function TransactionForm({
               <Input
                 {...field}
                 onChange={(e) => field.onChange(Number(e.target.value))}
-                value={Number(field.value)}
+                value={Number(field.value) || undefined}
                 type="number"
                 placeholder="0.00"
                 inputMode="decimal"
