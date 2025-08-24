@@ -154,6 +154,9 @@ export default function AccountsPage() {
                             variant="outline"
                             size="icon"
                             className="hover:bg-primary hover:text-primary-foreground"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                            }}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -164,6 +167,9 @@ export default function AccountsPage() {
                               variant="outline"
                               size="icon"
                               className="hover:bg-destructive hover:text-destructive-foreground"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                              }}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>

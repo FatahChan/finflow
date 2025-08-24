@@ -441,8 +441,7 @@ function TransactionForm({
                 <option value="">Select an account</option>
                 {accounts.map((account) => (
                   <option key={account.id} value={account.id}>
-                    {account.name}{" "}
-                    <span className="uppercase"> ({account.currency})</span>
+                    {account.name} {account.currency.toUpperCase()}
                   </option>
                 ))}
               </NativeSelect>

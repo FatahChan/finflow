@@ -91,6 +91,22 @@ export default defineConfig({
             purpose: "maskable",
           },
         ],
+        screenshots: [
+          {
+            src: "mobile.png",
+            sizes: "390x844",
+            type: "image/png",
+            form_factor: "narrow",
+            label: "FinFlow Mobile View"
+          },
+          {
+            src: "desktop.png",
+            sizes: "1280x720",
+            type: "image/png",
+            form_factor: "wide",
+            label: "FinFlow Desktop View"
+          }
+        ],
       },
     }),
     viteReactOxc(),
