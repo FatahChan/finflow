@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.3.0](https://github.com/FatahChan/finflow/compare/0.2.0...0.3.0) (2025-08-24)
+
+
+### Features
+
+* add PWA screenshots and fix UI event propagation in dashboard views ([396120b](https://github.com/FatahChan/finflow/commit/396120bc7084fb7a25b074a6d4c662c672e248e0))
+
 # [0.2.0](https://github.com/FatahChan/finflow/compare/0.1.3...0.2.0) (2025-08-24)
 
 
