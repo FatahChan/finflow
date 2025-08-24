@@ -59,8 +59,14 @@ export default defineConfig({
         short_name: "FinFlow",
         description: "A personal finance management app",
         start_url: "/dashboard/home",
+        display: "standalone",
+        display_override: ["window-controls-overlay"],
+        orientation: "portrait-primary",
         theme_color: "#4F46E5",
         background_color: "#4F46E5",
+        launch_handler: {
+          client_mode: "navigate-new"
+        },
         icons: [
           {
             src: "pwa-64x64.png",

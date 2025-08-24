@@ -186,3 +186,11 @@ body {
     }
     }
 }
+
+@media (display-mode: standalone) {
+  body {
+    min-width: 400px;
+    max-width: 1200px;
+    min-height: 600px;
+  }
+}
