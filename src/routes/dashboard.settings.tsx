@@ -31,6 +31,7 @@ import {
 import { useIsOnline } from "react-use-is-online";
 import { deleteUser } from "@/actions/delete-user";
 import { toast } from "sonner";
+import { version } from "@/../package.json";
 
 export const Route = createFileRoute("/dashboard/settings")({
   component: SettingsPage,
@@ -162,13 +163,7 @@ export default function SettingsPage() {
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Version</span>
-              <span className="text-sm font-medium">1.0.0</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">
-                Last Updated
-              </span>
-              <span className="text-sm font-medium">Aug 23, 2025</span>
+              <span className="text-sm font-medium">{version}</span>
             </div>
             <Separator />
             <div className="flex flex-col gap-4">

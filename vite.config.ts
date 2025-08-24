@@ -52,7 +52,7 @@ export default defineConfig({
     VitePWA({
       registerType: "autoUpdate",
       workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,js}"],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,js,json}"],
       },
       manifest: {
         name: "FinFlow",
