@@ -196,10 +196,8 @@ body {
 }
 
 // reduce motion query
-@media (prefers-reduced-motion: reduce) {
-    * {
-        transition: none !important;
-        animation: none !important;
-        scroll-behavior: auto !important;
-    }
+* {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
 }
