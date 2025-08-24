@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.2.0](https://github.com/FatahChan/finflow/compare/0.1.3...0.2.0) (2025-08-24)
+
+
+### Features
+
+* add PWA standalone mode with window controls and responsive layout ([d4c1f7b](https://github.com/FatahChan/finflow/commit/d4c1f7b7e52aa0dc0689d21a8a202d8c472a0e74))
+
 ## [0.1.3](https://github.com/FatahChan/finflow/compare/0.1.2...0.1.3) (2025-08-24)
 
 ## [0.1.2](https://github.com/FatahChan/finflow/compare/0.1.0...0.1.2) (2025-08-24)
