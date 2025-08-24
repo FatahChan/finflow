@@ -124,16 +124,16 @@ export default function AccountsPage() {
         ) : (
           <div className="space-y-4">
             {accounts?.map((account) => (
-              <Link
-                to={"/dashboard/transactions"}
-                search={{
-                  filterAccount: account.id,
-                  filterType: "all",
-                }}
-              >
-                <Card key={account.id}>
-                  <CardContent className="pt-0">
-                    <div className="flex items-center justify-between">
+              <Card key={account.id}>
+                <CardContent className="pt-0">
+                  <div className="flex items-center justify-between">
+                    <Link
+                      to={"/dashboard/transactions"}
+                      search={{
+                        filterAccount: account.id,
+                        filterType: "all",
+                      }}
+                    >
                       <div className="flex-1">
                         <h3 className="font-medium text-foreground mb-1">
                           {account.name}
@@ -148,63 +148,59 @@ export default function AccountsPage() {
                           />
                         )}
                       </div>
-                      <div className="flex space-x-2">
-                        <AccountDialog>
+                    </Link>
+                    <div className="flex space-x-2">
+                      <AccountDialog>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className="hover:bg-primary hover:text-primary-foreground"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                      </AccountDialog>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
                           <Button
                             variant="outline"
                             size="icon"
-                            className="hover:bg-primary hover:text-primary-foreground"
+                            className="hover:bg-destructive hover:text-destructive-foreground"
                             onClick={(e) => {
                               e.stopPropagation();
                             }}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
-                        </AccountDialog>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="hover:bg-destructive hover:text-destructive-foreground"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                              }}
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Account</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{account.name}
+                              "? This will also delete all associated
+                              transactions. This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() =>
+                                db.transact(db.tx.accounts[account.id].delete())
+                              }
+                              className="bg-destructive hover:bg-destructive/80"
                             >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Delete Account
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{account.name}
-                                "? This will also delete all associated
-                                transactions. This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() =>
-                                  db.transact(
-                                    db.tx.accounts[account.id].delete()
-                                  )
-                                }
-                                className="bg-destructive hover:bg-destructive/80"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
-                  </CardContent>
-                </Card>
-              </Link>
+                  </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         )}
