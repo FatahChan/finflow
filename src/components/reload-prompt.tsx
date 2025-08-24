@@ -64,7 +64,7 @@ function ReloadPrompt() {
 
   return (
     <AlertDialog
-      open={
+      defaultOpen={
         offlineReady ||
         needRefresh ||
         isCaptured ||
@@ -80,7 +80,7 @@ function ReloadPrompt() {
           </AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={close}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
           {needRefresh ? (
             <AlertDialogAction onClick={() => updateServiceWorker(true)}>
               Reload
