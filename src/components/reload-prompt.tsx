@@ -64,12 +64,17 @@ function ReloadPrompt() {
 
   return (
     <AlertDialog
-      open={offlineReady || needRefresh || isCaptured || supported()}
+      open={
+        offlineReady ||
+        needRefresh ||
+        isCaptured ||
+        (supported() && !isInstalled())
+      }
     >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
-            {offlineReady
+            {offlineReady || (!isInstalled() && supported())
               ? "App ready to work offline"
               : "New content available"}
           </AlertDialogTitle>
