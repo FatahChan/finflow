@@ -19,6 +19,14 @@ export default defineConfig({
         enabled: true,
       },
       pages:[
+
+        {
+          path: "/dashboard/home",
+          prerender: {
+            enabled: true,
+            outputPath: "dashboard/home.html",
+          },
+        },
         {
           path: "/",
           prerender: {
