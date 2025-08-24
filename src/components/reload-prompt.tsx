@@ -9,7 +9,7 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import { useReactPWAInstall } from "./pwa-install";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { toast } from "sonner";
 
 function ReloadPrompt() {
@@ -62,14 +62,10 @@ function ReloadPrompt() {
       .catch(() => toast.error("User opted out from installing"));
   }, [pwaInstall]);
 
-  useEffect(() => {
-    console.log("offlineReady", offlineReady);
-    console.log("needRefresh", needRefresh);
-    console.log("isCaptured", isCaptured);
-  }, [offlineReady, needRefresh, isCaptured]);
-
   return (
-    <AlertDialog open={offlineReady || needRefresh || isCaptured}>
+    <AlertDialog
+      open={offlineReady || needRefresh || isCaptured || supported()}
+    >
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>
@@ -84,7 +80,7 @@ function ReloadPrompt() {
             <AlertDialogAction onClick={() => updateServiceWorker(true)}>
               Reload
             </AlertDialogAction>
-          ) : offlineReady && !isInstalled() && supported() ? (
+          ) : offlineReady || (!isInstalled() && supported()) ? (
             <AlertDialogAction onClick={() => handleInstall()}>
               Install
             </AlertDialogAction>
