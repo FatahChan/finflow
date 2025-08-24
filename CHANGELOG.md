@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.4.0](https://github.com/FatahChan/finflow/compare/0.3.1...0.4.0) (2025-08-24)
+
+
+### Features
+
+* add tag input component and categories management in settings ([d21aa44](https://github.com/FatahChan/finflow/commit/d21aa447d3c52923162f2865a031d9f2a3600543))
+
 ## [0.3.1](https://github.com/FatahChan/finflow/compare/0.3.0...0.3.1) (2025-08-24)
 
 # [0.3.0](https://github.com/FatahChan/finflow/compare/0.2.0...0.3.0) (2025-08-24)
