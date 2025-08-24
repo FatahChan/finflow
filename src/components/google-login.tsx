@@ -60,7 +60,7 @@ export function GoogleLoginButton() {
                 }),
               ]);
             })
-            .then(() => navigate({ to: "/dashboard/home" }))
+            .then(() => navigate({ to: "/" }))
             .catch((err) => {
               toast.error(err.body?.message);
             });

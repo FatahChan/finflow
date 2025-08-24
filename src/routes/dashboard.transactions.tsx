@@ -65,10 +65,8 @@ const searchSchema = z.object({
     .check(z.minLength(1, "Filter Type is required")),
 });
 
-export const Route = createFileRoute(
-  "/_dashboard-layout/dashboard/transactions"
-)({
-  validateSearch: searchSchema,
+export const Route = createFileRoute("/dashboard/transactions")({
+  validateSearch: zodValidator(searchSchema),
   component: TransactionsPage,
   head: () => ({
     meta: [

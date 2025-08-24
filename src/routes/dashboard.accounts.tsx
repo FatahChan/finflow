@@ -53,7 +53,7 @@ import { Header } from "@/components/header";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { NativeSelect } from "@/components/ui/native-select";
 
-export const Route = createFileRoute("/_dashboard-layout/dashboard/accounts")({
+export const Route = createFileRoute("/dashboard/accounts")({
   component: AccountsPage,
   head: () => ({
     meta: [

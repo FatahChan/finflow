@@ -18,7 +18,7 @@ import { useMemo } from "react";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { Header } from "@/components/header";
 
-export const Route = createFileRoute("/_dashboard-layout/dashboard/home")({
+export const Route = createFileRoute("/dashboard/")({
   component: HomePage,
   head: () => ({
     meta: [
