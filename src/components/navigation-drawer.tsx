@@ -72,7 +72,7 @@ export function NavigationDrawer() {
           </div>
         </SheetHeader>
 
-        <div className="flex flex-col space-y-4 py-6">
+        <div className="flex flex-col space-y-4">
           <Button
             variant="ghost"
             className="justify-start"

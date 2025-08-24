@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 import type React from "react";
 
@@ -124,69 +124,81 @@ export default function AccountsPage() {
         ) : (
           <div className="space-y-4">
             {accounts?.map((account) => (
-              <Card key={account.id}>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between">
-                    <div className="flex-1">
-                      <h3 className="font-medium text-foreground mb-1">
-                        {account.name}
-                      </h3>
-                      {isLoading ? (
-                        <Skeleton className="h-4 w-20" />
-                      ) : (
-                        <Money
-                          amount={accountsBalance[account.id]}
-                          currency={account.currency}
-                          positive={accountsBalance[account.id] >= 0}
-                        />
-                      )}
-                    </div>
-                    <div className="flex space-x-2">
-                      <AccountDialog>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="hover:bg-primary hover:text-primary-foreground"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </AccountDialog>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
+              <Link
+                to={"/dashboard/transactions"}
+                search={{
+                  filterAccount: account.id,
+                  filterType: "all",
+                }}
+              >
+                <Card key={account.id}>
+                  <CardContent className="pt-0">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <h3 className="font-medium text-foreground mb-1">
+                          {account.name}
+                        </h3>
+                        {isLoading ? (
+                          <Skeleton className="h-4 w-20" />
+                        ) : (
+                          <Money
+                            amount={accountsBalance[account.id]}
+                            currency={account.currency}
+                            positive={accountsBalance[account.id] >= 0}
+                          />
+                        )}
+                      </div>
+                      <div className="flex space-x-2">
+                        <AccountDialog>
                           <Button
                             variant="outline"
                             size="icon"
-                            className="hover:bg-destructive hover:text-destructive-foreground"
+                            className="hover:bg-primary hover:text-primary-foreground"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Edit className="h-4 w-4" />
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Account</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete "{account.name}
-                              "? This will also delete all associated
-                              transactions. This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() =>
-                                db.transact(db.tx.accounts[account.id].delete())
-                              }
-                              className="bg-destructive hover:bg-destructive/80"
+                        </AccountDialog>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="hover:bg-destructive hover:text-destructive-foreground"
                             >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Delete Account
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete "{account.name}
+                                "? This will also delete all associated
+                                transactions. This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  db.transact(
+                                    db.tx.accounts[account.id].delete()
+                                  )
+                                }
+                                className="bg-destructive hover:bg-destructive/80"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         )}

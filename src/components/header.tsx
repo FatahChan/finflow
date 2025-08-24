@@ -7,7 +7,7 @@ export function Header({
   backButton,
   actions,
 }: {
-  title: string;
+  title: React.ReactNode;
   backButton?: boolean;
   actions?: React.ReactNode;
 }) {

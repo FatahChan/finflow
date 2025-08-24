@@ -120,43 +120,49 @@ export default function TransactionsPage() {
       />
 
       {/* Filters */}
-      {accounts.length > 0 && !isLoading && (
-        <div className="px-4 py-4 bg-card border-b">
-          <div className="flex space-x-2">
-            <NativeSelect
-              value={filterAccount}
-              onChange={(e) =>
-                navigate({
-                  search: { filterAccount: e.target.value, filterType },
-                })
-              }
-              className="flex-1"
-            >
-              {accounts.map((account) => (
-                <option key={account.id} value={account.id}>
-                  {account.name}
-                </option>
-              ))}
-            </NativeSelect>
+      <div className="px-4 py-4 bg-card border-b">
+        <div className="flex space-x-2">
+          <NativeSelect
+            value={filterAccount}
+            onChange={(e) =>
+              navigate({
+                search: { filterAccount: e.target.value, filterType },
+              })
+            }
+            className="flex-1"
+          >
+            {isLoading ? (
+              <option disabled>Loading...</option>
+            ) : (
+              <>
+                <option value="all">All Accounts</option>
+                {accounts.map((account) => (
+                  <option key={account.id} value={account.id}>
+                    {account.name}
+                  </option>
+                ))}
+              </>
+            )}
+          </NativeSelect>
 
-            <NativeSelect
-              value={filterType}
-              onChange={(e) =>
-                navigate({
-                  search: {
-                    filterAccount,
-                    filterType: e.target.value as "all" | "credit" | "debit",
-                  },
-                })
-              }
-            >
-              <option value="all">All Types</option>
-              <option value="credit">Credit</option>
-              <option value="debit">Debit</option>
-            </NativeSelect>
-          </div>
+          <NativeSelect
+            value={filterType}
+            onChange={(e) =>
+              navigate({
+                search: {
+                  filterAccount,
+                  filterType: e.target.value as "all" | "credit" | "debit",
+                },
+              })
+            }
+            className="flex-1"
+          >
+            <option value="all">All Types</option>
+            <option value="credit">Credit</option>
+            <option value="debit">Debit</option>
+          </NativeSelect>
         </div>
-      )}
+      </div>
 
       {/* Transactions List */}
       <div className="px-4 py-6">
@@ -521,6 +527,7 @@ function TransactionForm({
                   value={field.value}
                   className="w-full"
                 >
+                  <option value="">Select a category</option>
                   {categories[type].map((category) => (
                     <option key={category} value={category}>
                       {category}

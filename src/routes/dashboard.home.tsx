@@ -17,6 +17,7 @@ import {
 import { useMemo } from "react";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { Header } from "@/components/header";
+import { useReactPWAInstall } from "@/components/pwa-install";
 
 export const Route = createFileRoute("/dashboard/home")({
   component: HomePage,
@@ -52,10 +53,16 @@ export default function HomePage() {
   }, [transactions, isLoading, defaultCurrency, exchangeRates]);
   const totalBalance = use$(totalBalance$);
 
+  const { isInstalled } = useReactPWAInstall();
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
-      <Header title="FinFlow" actions={<NavigationDrawer />} />
+      <Header
+        title={
+          <Link to={isInstalled() ? "/dashboard/home" : "/"}>FinFlow</Link>
+        }
+        actions={<NavigationDrawer />}
+      />
 
       {/* Total Balance */}
       <div className="px-4 py-6">
