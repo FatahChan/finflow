@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.2](https://github.com/FatahChan/finflow/compare/0.5.1...0.5.2) (2025-08-24)
+
+
+### Bug Fixes
+
+* update reload prompt to use defaultOpen and remove redundant onClick handler ([4cbf944](https://github.com/FatahChan/finflow/commit/4cbf9440a401e9235d11bb9c61425ec738452cc3))
+
 ## [0.5.1](https://github.com/FatahChan/finflow/compare/0.5.0...0.5.1) (2025-08-24)
 
 
