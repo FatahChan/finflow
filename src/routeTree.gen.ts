@@ -14,6 +14,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as DashboardLayoutRouteImport } from './routes/_dashboard-layout'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardLayoutDashboardTransactionsRouteImport } from './routes/_dashboard-layout/dashboard.transactions'
 import { Route as DashboardLayoutDashboardSettingsRouteImport } from './routes/_dashboard-layout/dashboard.settings'
 import { Route as DashboardLayoutDashboardHomeRouteImport } from './routes/_dashboard-layout/dashboard.home'
@@ -43,6 +44,11 @@ const DashboardLayoutRoute = DashboardLayoutRouteImport.update({
   id: '/_dashboard-layout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DashboardLayoutDashboardTransactionsRoute =
   DashboardLayoutDashboardTransactionsRouteImport.update({
     id: '/dashboard/transactions',
@@ -69,6 +75,7 @@ const DashboardLayoutDashboardAccountsRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/transactions': typeof DashboardLayoutDashboardTransactionsRoute
 }
 export interface FileRoutesByTo {
+  '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/privacy': typeof PrivacyRoute
@@ -90,6 +98,7 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
+  '/': typeof IndexRoute
   '/_dashboard-layout': typeof DashboardLayoutRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
@@ -103,6 +112,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/about'
     | '/login'
     | '/privacy'
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/'
     | '/about'
     | '/login'
     | '/privacy'
@@ -123,6 +134,7 @@ export interface FileRouteTypes {
     | '/dashboard/transactions'
   id:
     | '__root__'
+    | '/'
     | '/_dashboard-layout'
     | '/about'
     | '/login'
@@ -135,6 +147,7 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
+  IndexRoute: typeof IndexRoute
   DashboardLayoutRoute: typeof DashboardLayoutRouteWithChildren
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
@@ -177,6 +190,13 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof DashboardLayoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_dashboard-layout/dashboard/transactions': {
@@ -230,6 +250,7 @@ const DashboardLayoutRouteWithChildren = DashboardLayoutRoute._addFileChildren(
 )
 
 const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
   DashboardLayoutRoute: DashboardLayoutRouteWithChildren,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,

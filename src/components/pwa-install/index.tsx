@@ -28,10 +28,6 @@ interface AwaitingPromise {
   reject: () => void;
 }
 
-type BeforeInstallPromptEvent = Parameters<
-  Parameters<typeof window.addEventListener<"beforeinstallprompt">>[1]
->[0];
-
 const ReactPWAInstallContext = createContext<PWAInstallContextValue>({
   supported: () => false,
   isInstalled: () => false,
