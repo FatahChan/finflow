@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.7.0](https://github.com/FatahChan/finflow/compare/0.6.0...0.7.0) (2025-08-24)
+
+
+### Features
+
+* add prerender config for dashboard home page and format manifest.json ([60e0c2a](https://github.com/FatahChan/finflow/commit/60e0c2ac158406cee5e3c8fa6142396ce5698601))
+
 # [0.6.0](https://github.com/FatahChan/finflow/compare/0.5.2...0.6.0) (2025-08-24)
 
 
