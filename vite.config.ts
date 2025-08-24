@@ -58,6 +58,7 @@ export default defineConfig({
         name: "FinFlow",
         short_name: "FinFlow",
         description: "A personal finance management app",
+        start_url: "/dashboard/home",
         theme_color: "#4F46E5",
         background_color: "#4F46E5",
         icons: [
