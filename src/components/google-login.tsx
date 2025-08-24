@@ -38,6 +38,9 @@ export function GoogleLoginButton() {
     <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
       <GoogleLogin
         nonce={nonce}
+        size="large"
+        shape="circle"
+        theme="filled_blue"
         onError={() => toast.error("Login failed")}
         onSuccess={({ credential }) => {
           const jwt: jwtDecoded = jose.decodeJwt(credential!);

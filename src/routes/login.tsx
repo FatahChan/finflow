@@ -17,16 +17,16 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-600">
-            <Wallet className="h-8 w-8 text-white" />
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-primary">
+            <Wallet className="h-8 w-8 text-primary-foreground" />
           </div>
-          <CardTitle className="text-2xl font-bold text-gray-900">
-            Welcome to Finance Manager
+          <CardTitle className="text-2xl font-bold text-foreground">
+            Welcome to FinFlow
           </CardTitle>
-          <p className="text-gray-600 mt-2">
+          <p className="text-muted-foreground mt-2">
             Sign in to manage your accounts and transactions
           </p>
         </CardHeader>
@@ -34,19 +34,19 @@ function LoginPage() {
           <span className="flex items-center justify-center">
             <GoogleLoginButton />
           </span>
-          <div className="text-center text-sm text-gray-500 mt-6">
+          <div className="text-center text-sm text-muted-foreground mt-6">
             <p>
               By signing in, you agree to our{" "}
               <Link
                 to="/terms"
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="text-primary hover:text-primary/80 underline"
               >
                 Terms of Service
               </Link>{" "}
               and{" "}
               <Link
                 to="/privacy"
-                className="text-blue-600 hover:text-blue-800 underline"
+                className="text-primary hover:text-primary/80 underline"
               >
                 Privacy Policy
               </Link>
