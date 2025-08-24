@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.6.0](https://github.com/FatahChan/finflow/compare/0.5.2...0.6.0) (2025-08-24)
+
+
+### Features
+
+* implement custom service worker with Workbox for offline functionality ([0a961c7](https://github.com/FatahChan/finflow/commit/0a961c7a610dde4efff359ddd6b655a3722a20b6))
+
 ## [0.5.2](https://github.com/FatahChan/finflow/compare/0.5.1...0.5.2) (2025-08-24)
 
 
