@@ -38,8 +38,7 @@ import {
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { Calendar } from "@/components/ui/calendar";
-import { zodValidator } from "@tanstack/zod-adapter";
-import { z } from "zod";
+import * as z from "zod/mini";
 import { db } from "@/lib/instant-db";
 import { id } from "@instantdb/react";
 import {
@@ -57,12 +56,16 @@ import { NavigationDrawer } from "@/components/navigation-drawer";
 import { NativeSelect } from "@/components/ui/native-select";
 
 const searchSchema = z.object({
-  filterAccount: z.string().default("all").catch("all"),
-  filterType: z.enum(["all", "credit", "debit"]).default("all").catch("all"),
+  filterAccount: z.string().check(z.minLength(1, "Filter Account is required")),
+  filterType: z
+    .enum(["all", "credit", "debit"])
+    .check(z.minLength(1, "Filter Type is required")),
 });
 
-export const Route = createFileRoute("/_dashboard-layout/dashboard/transactions")({
-  validateSearch: zodValidator(searchSchema),
+export const Route = createFileRoute(
+  "/_dashboard-layout/dashboard/transactions"
+)({
+  validateSearch: searchSchema,
   component: TransactionsPage,
   head: () => ({
     meta: [
@@ -122,7 +125,9 @@ export default function TransactionsPage() {
             <NativeSelect
               value={filterAccount}
               onChange={(e) =>
-                navigate({ search: { filterAccount: e.target.value } })
+                navigate({
+                  search: { filterAccount: e.target.value, filterType },
+                })
               }
               className="flex-1"
             >
@@ -138,6 +143,7 @@ export default function TransactionsPage() {
               onChange={(e) =>
                 navigate({
                   search: {
+                    filterAccount,
                     filterType: e.target.value as "all" | "credit" | "debit",
                   },
                 })

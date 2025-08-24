@@ -1,5 +1,5 @@
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import * as z from "zod/mini";
 
 export const clientEnv = createEnv({
   /*
@@ -8,9 +8,9 @@ export const clientEnv = createEnv({
    * 💡 You'll get type errors if these are not prefixed with VITE_.
    */
   client: {
-    VITE_INSTANT_APP_ID: z.string().min(1, "InstantDB App ID is required"),
-    VITE_GOOGLE_CLIENT_ID: z.string().min(1, "Google Client ID is required"),
-    VITE_GOOGLE_CLIENT_NAME: z.string().min(1, "Google Client Name is required"),
+    VITE_INSTANT_APP_ID: z.string().check(z.minLength(1, "InstantDB App ID is required")),
+    VITE_GOOGLE_CLIENT_ID: z.string().check(z.minLength(1, "Google Client ID is required")),
+    VITE_GOOGLE_CLIENT_NAME: z.string().check(z.minLength(1, "Google Client Name is required")),
   },
 
   /*

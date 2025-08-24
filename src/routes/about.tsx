@@ -1,7 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Header } from "@/components/header";
-import { NavigationDrawer } from "@/components/navigation-drawer";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, Heart, Code, Shield } from "lucide-react";
 

@@ -44,7 +44,7 @@ import {
   accountsWithTransactionsQuery,
   type ReturnQuery,
 } from "@/instant.queries";
-import z from "zod";
+import * as z from "zod/mini";
 import { id } from "@instantdb/react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { currencies, type Currency } from "@/lib/legend-state";

@@ -1,10 +1,10 @@
 import { createEnv } from "@t3-oss/env-core";
-import { z } from "zod";
+import * as z from "zod/mini";
 
 export const serverEnv = createEnv({
   server: {
-    VITE_INSTANT_APP_ID: z.string().min(1, "InstantDB App ID is required"),
-    INSTANT_APP_ADMIN_TOKEN: z.string().min(1, "InstantDB Admin Token is required"),
+    VITE_INSTANT_APP_ID: z.string().check(z.minLength(1, "InstantDB App ID is required")),
+    INSTANT_APP_ADMIN_TOKEN: z.string().check(z.minLength(1, "InstantDB Admin Token is required")),
   },
   /*
    * What object holds the environment variables at runtime. This is usually

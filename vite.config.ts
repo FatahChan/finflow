@@ -5,6 +5,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
 import viteReactOxc from "@vitejs/plugin-react-oxc";
 import { VitePWA } from 'vite-plugin-pwa'
+import { analyzer } from 'vite-bundle-analyzer'
 
 export default defineConfig({
   server: {
@@ -88,5 +89,6 @@ export default defineConfig({
     }),
     viteReactOxc(),
     tailwindcss(),
+    analyzer()
   ],
 });

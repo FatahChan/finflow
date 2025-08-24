@@ -1,7 +1,7 @@
 import { observable } from "@legendapp/state";
 import { ObservablePersistLocalStorage } from "@legendapp/state/persist-plugins/local-storage";
 import { configureSynced, synced } from "@legendapp/state/sync";
-import z from "zod";
+import * as z from "zod/mini";
 
 const localSynced = configureSynced(synced, {
   persist: {
