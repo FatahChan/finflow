@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.5.0](https://github.com/FatahChan/finflow/compare/0.4.1...0.5.0) (2025-08-24)
+
+
+### Features
+
+* implement PWA installation prompt and offline functionality ([88e79e2](https://github.com/FatahChan/finflow/commit/88e79e2a4ee97c7f4f2c6e5454622238fb1fa1fc))
+
 ## [0.4.1](https://github.com/FatahChan/finflow/compare/0.4.0...0.4.1) (2025-08-24)
 
 # [0.4.0](https://github.com/FatahChan/finflow/compare/0.3.1...0.4.0) (2025-08-24)
