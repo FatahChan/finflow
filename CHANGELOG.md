@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.1](https://github.com/FatahChan/finflow/compare/0.5.0...0.5.1) (2025-08-24)
+
+
+### Bug Fixes
+
+* show PWA install prompt only when not already installed ([d83301a](https://github.com/FatahChan/finflow/commit/d83301ad4dbe9a2143320e172f47b0f856588346))
+
 # [0.5.0](https://github.com/FatahChan/finflow/compare/0.4.1...0.5.0) (2025-08-24)
 
 
