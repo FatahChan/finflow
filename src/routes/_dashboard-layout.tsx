@@ -8,7 +8,7 @@ import {
 import { HandCoins, Home, Wallet } from "lucide-react";
 import { Suspense } from "react";
 
-export const Route = createFileRoute("/dashboard")({
+export const Route = createFileRoute("/_dashboard-layout")({
   beforeLoad: async () => {
     const user = await db.getAuth();
     if (!user) {
@@ -29,7 +29,7 @@ function RouteComponent() {
       <div className="absolute bottom-0 left-0 right-0 bg-background border-t">
         <div className="grid grid-cols-3 gap-1 p-2">
           <Link
-            to="/dashboard"
+            to="/dashboard/home"
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >

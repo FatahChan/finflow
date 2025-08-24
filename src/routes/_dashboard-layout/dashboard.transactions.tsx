@@ -61,7 +61,7 @@ const searchSchema = z.object({
   filterType: z.enum(["all", "credit", "debit"]).default("all").catch("all"),
 });
 
-export const Route = createFileRoute("/dashboard/transactions")({
+export const Route = createFileRoute("/_dashboard-layout/dashboard/transactions")({
   validateSearch: zodValidator(searchSchema),
   component: TransactionsPage,
   head: () => ({
