@@ -210,6 +210,7 @@ function AccountDialog({
   >["accounts"][number];
   children?: React.ReactNode;
 }) {
+  const user = db.useUser();
   const handleSubmit = (data: AccountZodType) => {
     if (account) {
       db.transact(
@@ -223,6 +224,9 @@ function AccountDialog({
       db.transact([
         db.tx.accounts[_id].create({
           ...data,
+        }),
+        db.tx.accounts[_id].link({
+          user: user!.id,
         }),
       ]);
     }
