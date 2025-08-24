@@ -291,13 +291,16 @@ export default function TransactionsPage() {
 }
 
 const transactionZodSchema = z.object({
-  accountId: z.string(),
-  name: z.string(),
-  amount: z.number(),
+  accountId: z.string().check(z.minLength(1, "Account is required")),
+  name: z.string().check(z.minLength(1, "Name is required")),
+  amount: z.number().check(z.minimum(1, "Amount is required")),
   type: z.enum(["credit", "debit"]),
-  category: z.string(),
-  transactionAt: z.string(),
+  category: z.string().check(z.minLength(1, "Category is required")),
+  transactionAt: z
+    .string()
+    .check(z.minLength(1, "Transaction Date is required")),
 });
+
 type TransactionsFormZodType = z.infer<typeof transactionZodSchema>;
 function TransactionDialog({
   children,
@@ -310,6 +313,9 @@ function TransactionDialog({
 }) {
   const [open, setOpen] = useState(false);
   const handleSubmit = ({ accountId, ...data }: TransactionsFormZodType) => {
+    console.log(accountId);
+    console.log(data);
+
     try {
       if (transaction) {
         db.transact(
@@ -320,6 +326,7 @@ function TransactionDialog({
         );
       } else {
         const _id = id();
+        console.log(accountId);
         db.transact([
           db.tx.transactions[_id].create({
             ...data,
@@ -334,6 +341,15 @@ function TransactionDialog({
       toast.error(`Failed to create transaction: ${error}`);
     }
   };
+
+  const { data: parsedTransaction } = transactionZodSchema.safeParse({
+    accountId: transaction?.account?.id,
+    name: transaction?.name,
+    amount: transaction?.amount,
+    type: transaction?.type,
+    category: transaction?.category,
+    transactionAt: transaction?.transactionAt,
+  });
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
@@ -355,7 +371,10 @@ function TransactionDialog({
             {transaction ? "Edit Transaction" : "Add Transaction"}
           </DialogTitle>
         </DialogHeader>
-        <TransactionForm onSubmit={handleSubmit}>
+        <TransactionForm
+          onSubmit={handleSubmit}
+          defaultValues={parsedTransaction ?? undefined}
+        >
           <Button type="submit" className="flex-1">
             {transaction ? "Update" : "Create"}
           </Button>
@@ -373,9 +392,11 @@ function TransactionDialog({
 function TransactionForm({
   onSubmit,
   children,
+  defaultValues,
 }: {
   onSubmit: (data: TransactionsFormZodType) => void;
   children?: React.ReactNode;
+  defaultValues?: TransactionsFormZodType;
 }) {
   const categories = use$(categories$);
 
@@ -388,6 +409,7 @@ function TransactionForm({
       type: "credit",
       category: "",
       transactionAt: new Date().toISOString(),
+      ...defaultValues,
     } as TransactionsFormZodType,
   });
 
@@ -406,12 +428,18 @@ function TransactionForm({
             <FormItem>
               <FormLabel>Account</FormLabel>
               <NativeSelect
-                onChange={(e) => field.onChange(e.target.value)}
-                defaultValue={field.value}
+                onChange={(e) => {
+                  console.log(e.target.value);
+                  field.onChange(e.target.value);
+                }}
+                value={field.value}
+                className="w-full"
               >
+                <option value="">Select an account</option>
                 {accounts.map((account) => (
                   <option key={account.id} value={account.id}>
-                    {account.name} ({account.currency})
+                    {account.name}{" "}
+                    <span className="uppercase"> ({account.currency})</span>
                   </option>
                 ))}
               </NativeSelect>
@@ -467,7 +495,8 @@ function TransactionForm({
               <FormLabel>Type</FormLabel>
               <NativeSelect
                 onChange={(e) => field.onChange(e.target.value)}
-                defaultValue={field.value}
+                value={field.value}
+                className="w-full"
               >
                 <option value="credit">Credit (Income)</option>
                 <option value="debit">Debit (Expense)</option>
@@ -490,6 +519,7 @@ function TransactionForm({
                 <NativeSelect
                   onChange={(e) => field.onChange(e.target.value)}
                   value={field.value}
+                  className="w-full"
                 >
                   {categories[type].map((category) => (
                     <option key={category} value={category}>
