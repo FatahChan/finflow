@@ -14,7 +14,7 @@ export const Route = createFileRoute("/dashboard")({
   beforeLoad: async () => {
     const user = await db.getAuth();
     if (!user) {
-      throw redirect({ to: "/login" });
+      throw redirect({ to: "/" });
     }
   },
   component: RouteComponent,
