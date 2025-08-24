@@ -66,7 +66,7 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute("/dashboard/transactions")({
-  validateSearch: zodValidator(searchSchema),
+  validateSearch: searchSchema,
   component: TransactionsPage,
   head: () => ({
     meta: [
