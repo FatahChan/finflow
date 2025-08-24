@@ -19,8 +19,8 @@ export const Route = createFileRoute("/about")({
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
-      <Header title="About" actions={<NavigationDrawer />} />
-      
+      <Header title="About" backButton />
+
       <div className="px-4 py-6 space-y-6">
         {/* App Info */}
         <Card>
@@ -32,8 +32,9 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              FinFlow is a modern personal finance management app built to help you track your expenses, 
-              manage accounts, and gain insights into your financial health.
+              FinFlow is a modern personal finance management app built to help
+              you track your expenses, manage accounts, and gain insights into
+              your financial health.
             </p>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Version</span>
@@ -87,8 +88,9 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-muted-foreground">
-              Your financial data is encrypted and stored securely. We never share your personal 
-              information with third parties without your consent.
+              Your financial data is encrypted and stored securely. We never
+              share your personal information with third parties without your
+              consent.
             </p>
             <div className="flex flex-col gap-2">
               <Button variant="outline" size="sm" className="justify-start">
