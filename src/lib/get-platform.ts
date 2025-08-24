@@ -11,7 +11,10 @@ export const platforms = {
 
 export function getPlatform() {
   let platform = platforms.OTHER;
-  if (Object.prototype.hasOwnProperty.call(window, "BeforeInstallPromptEvent")) {
+  if (typeof window === "undefined"){
+    return platform;
+  }
+  else if (Object.prototype.hasOwnProperty.call(window, "BeforeInstallPromptEvent")) {
     platform = platforms.NATIVE;
   } else if (isMobile && isAndroid && isFirefox && +browserVersion >= 79) {
     platform = platforms.FIREFOX_NEW;

@@ -12,6 +12,9 @@ import { db } from "@/lib/instant-db";
 import { useNavigate } from "@tanstack/react-router";
 import { AlignJustify } from "lucide-react";
 import { AvatarImage, Avatar, AvatarFallback } from "./ui/avatar";
+import { useReactPWAInstall } from "./pwa-install";
+import { toast } from "sonner";
+import { useCallback } from "react";
 
 export function NavigationDrawer() {
   const navigate = useNavigate();
@@ -25,7 +28,29 @@ export function NavigationDrawer() {
       },
     },
   });
+  const { pwaInstall, supported, isInstalled } = useReactPWAInstall();
 
+  const handleInstall = useCallback(() => {
+    pwaInstall({
+      title: "Install FinFlow",
+      logo: "/pwa-512x512.png",
+      features: (
+        <ul>
+          <li>Tracks your expenses</li>
+          <li>Manages your accounts</li>
+          <li>Works offline</li>
+        </ul>
+      ),
+      description:
+        "A financial management app that helps you manage your money.",
+    })
+      .then(() =>
+        toast.success(
+          "App installed successfully or instructions for install shown"
+        )
+      )
+      .catch(() => toast.error("User opted out from installing"));
+  }, [pwaInstall]);
   const profile = data?.profiles.at(0);
   return (
     <Sheet>
@@ -76,6 +101,15 @@ export function NavigationDrawer() {
           >
             Terms of Service
           </Button>
+          {supported() && !isInstalled() ? (
+            <Button
+              className="justify-start"
+              variant={"secondary"}
+              onClick={() => handleInstall()}
+            >
+              Install
+            </Button>
+          ) : null}
         </div>
 
         <SheetFooter>

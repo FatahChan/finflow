@@ -1,28 +1,26 @@
-import React from "react";
-import "./ReloadPrompt.css";
-
 import { useRegisterSW } from "virtual:pwa-register/react";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "./ui/alert-dialog";
-import { Button } from "./ui/button";
+import { useReactPWAInstall } from "./pwa-install";
+import { useCallback } from "react";
+import { toast } from "sonner";
 
 function ReloadPrompt() {
+  const { pwaInstall, supported, isInstalled } = useReactPWAInstall();
+
   const {
     offlineReady: [offlineReady, setOfflineReady],
     needRefresh: [needRefresh, setNeedRefresh],
     updateServiceWorker,
   } = useRegisterSW({
     onRegistered(r) {
-      // eslint-disable-next-line prefer-template
       console.log("SW Registered: " + r);
     },
     onRegisterError(error) {
@@ -34,6 +32,28 @@ function ReloadPrompt() {
     setOfflineReady(false);
     setNeedRefresh(false);
   };
+
+  const handleInstall = useCallback(() => {
+    pwaInstall({
+      title: "Install FinFlow",
+      logo: "/pwa-512x512.png",
+      features: (
+        <ul>
+          <li>Tracks your expenses</li>
+          <li>Manages your accounts</li>
+          <li>Works offline</li>
+        </ul>
+      ),
+      description:
+        "A financial management app that helps you manage your money.",
+    })
+      .then(() =>
+        toast.success(
+          "App installed successfully or instructions for install shown"
+        )
+      )
+      .catch(() => toast.error("User opted out from installing"));
+  }, [pwaInstall]);
 
   return (
     <AlertDialog open={offlineReady || needRefresh}>
@@ -50,6 +70,10 @@ function ReloadPrompt() {
           {needRefresh ? (
             <AlertDialogAction onClick={() => updateServiceWorker(true)}>
               Reload
+            </AlertDialogAction>
+          ) : offlineReady && !isInstalled() && supported() ? (
+            <AlertDialogAction onClick={() => handleInstall()}>
+              Install
             </AlertDialogAction>
           ) : null}
         </AlertDialogFooter>
