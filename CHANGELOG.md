@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.8.0](https://github.com/FatahChan/finflow/compare/0.7.2...0.8.0) (2025-08-24)
+
+
+### Features
+
+* add prefers-reduced-motion support and remove hardcoded animation disabling ([4620c8d](https://github.com/FatahChan/finflow/commit/4620c8d837aa89c2bcfe845d1c723d615aa3ef03))
+
 ## [0.7.2](https://github.com/FatahChan/finflow/compare/0.7.1...0.7.2) (2025-08-24)
 
 ## [0.7.1](https://github.com/FatahChan/finflow/compare/0.7.0...0.7.1) (2025-08-24)
