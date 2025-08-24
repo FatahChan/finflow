@@ -20,6 +20,20 @@ export default defineConfig({
       },
       pages:[
         {
+          path: "/",
+          prerender: {
+            enabled: true,
+            outputPath: "index.html",
+          },
+        },
+        {
+          path: "/about",
+          prerender: {
+            enabled: true,
+            outputPath: "about.html",
+          },
+        },
+        {
           path: "/privacy",
           prerender: {
             enabled: true,
