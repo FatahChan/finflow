@@ -12,7 +12,6 @@ const localSynced = configureSynced(synced, {
     infinite: true, // Retry changes with exponential backoff
   },
 });
-// Create an observable with "todos" persisted
 export const categories$ = observable(
   localSynced({
     initial: {

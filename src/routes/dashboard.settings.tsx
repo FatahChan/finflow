@@ -11,9 +11,11 @@ import { Memo } from "@legendapp/state/react";
 import {
   currencies,
   defaultCurrency$,
+  categories$,
   type Currency,
 } from "@/lib/legend-state";
-import { Globe, Moon, Download, Trash2 } from "lucide-react";
+import { Globe, Moon, Download, Trash2, Tags } from "lucide-react";
+import { TagInput } from "@/components/ui/tag-input";
 import { NativeSelect } from "@/components/ui/native-select";
 import { useTheme } from "next-themes";
 import type { ComponentProps } from "react";
@@ -138,6 +140,43 @@ export default function SettingsPage() {
                       </option>
                     ))}
                   </NativeSelect>
+                )}
+              </Memo>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Categories */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Tags className="h-5 w-5" />
+              Categories
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Income Categories</Label>
+              <Memo>
+                {() => (
+                  <TagInput
+                    value={categories$.credit.get()}
+                    onChange={(tags) => categories$.credit.set(tags)}
+                    placeholder="Add income category..."
+                  />
+                )}
+              </Memo>
+            </div>
+            <Separator />
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">Expense Categories</Label>
+              <Memo>
+                {() => (
+                  <TagInput
+                    value={categories$.debit.get()}
+                    onChange={(tags) => categories$.debit.set(tags)}
+                    placeholder="Add expense category..."
+                  />
                 )}
               </Memo>
             </div>
