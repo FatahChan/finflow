@@ -37,7 +37,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { Calendar } from "@/components/ui/calendar";
 import * as z from "zod/mini";
 import { db } from "@/lib/instant-db";
 import { id } from "@instantdb/react";
@@ -49,12 +48,16 @@ import {
 import { use$ } from "@legendapp/state/react";
 
 import { categories$ } from "@/lib/legend-state";
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { toast } from "sonner";
 import { Header } from "@/components/header";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { NativeSelect } from "@/components/ui/native-select";
-
+const Calendar = lazy(() =>
+  import("@/components/ui/calendar").then((module) => ({
+    default: module.Calendar,
+  }))
+);
 const searchSchema = z.object({
   filterAccount: z.string().check(z.minLength(1, "Filter Account is required")),
   filterType: z
