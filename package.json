@@ -61,7 +61,6 @@
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.39.0",
     "vite": "npm:rolldown-vite@latest",
-    "vite-bundle-analyzer": "^1.2.1",
     "vite-plugin-pwa": "^1.0.3",
     "vite-tsconfig-paths": "^5.1.4"
   }
