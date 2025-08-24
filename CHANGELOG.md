@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.8.2](https://github.com/FatahChan/finflow/compare/0.8.1...0.8.2) (2025-08-24)
+
 ## [0.8.1](https://github.com/FatahChan/finflow/compare/0.8.0...0.8.1) (2025-08-24)
 
 # [0.8.0](https://github.com/FatahChan/finflow/compare/0.7.2...0.8.0) (2025-08-24)
