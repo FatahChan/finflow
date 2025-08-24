@@ -18,7 +18,7 @@ import { useMemo } from "react";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { Header } from "@/components/header";
 
-export const Route = createFileRoute("/dashboard/")({
+export const Route = createFileRoute("/dashboard/home")({
   component: HomePage,
   head: () => ({
     meta: [
@@ -77,7 +77,14 @@ export default function HomePage() {
           <h2 className="text-lg font-semibold text-foreground">
             Recent Transactions
           </h2>
-          <Link to="/dashboard/transactions">
+          <Link
+            from="/dashboard/home"
+            to="/dashboard/transactions"
+            search={{
+              filterAccount: "all",
+              filterType: "all",
+            }}
+          >
             <Button size="sm" variant="outline">
               View All
             </Button>
@@ -89,7 +96,14 @@ export default function HomePage() {
             <CardContent className="pt-6 text-center">
               <HandCoins className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <p className="text-muted-foreground mb-4">No transactions yet</p>
-              <Link from="/dashboard" to="/dashboard/transactions">
+              <Link
+                from="/dashboard/home"
+                to="/dashboard/transactions"
+                search={{
+                  filterAccount: "all",
+                  filterType: "all",
+                }}
+              >
                 <Button>Add Your First Transaction</Button>
               </Link>
             </CardContent>

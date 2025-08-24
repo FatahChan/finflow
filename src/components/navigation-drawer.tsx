@@ -51,7 +51,7 @@ export function NavigationDrawer() {
           <Button
             variant="ghost"
             className="justify-start"
-            onClick={() => navigate({ to: "/settings" })}
+            onClick={() => navigate({ to: "/dashboard/settings" })}
           >
             Settings
           </Button>

@@ -26,10 +26,10 @@ function RouteComponent() {
         <Outlet />
       </Suspense>
       {/* Bottom Navigation */}
-      <div className="absolute bottom-0 left-0 right-0 bg-background border-t">
+      <div className="sticky bottom-0 left-0 right-0 bg-background border-t">
         <div className="grid grid-cols-3 gap-1 p-2">
           <Link
-            to="/dashboard"
+            to="/dashboard/home"
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >
@@ -46,6 +46,10 @@ function RouteComponent() {
           </Link>
           <Link
             to="/dashboard/transactions"
+            search={{
+              filterAccount: "all",
+              filterType: "all",
+            }}
             activeProps={{ className: "text-primary" }}
             className="flex flex-col items-center py-2 px-2"
           >

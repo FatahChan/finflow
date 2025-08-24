@@ -64,7 +64,7 @@ function RootComponent() {
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <ThemeProvider attribute="class">
-      <html>
+      <html suppressHydrationWarning>
         <head>
           <HeadContent />
         </head>
