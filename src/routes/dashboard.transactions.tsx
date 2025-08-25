@@ -48,16 +48,12 @@ import {
 import { use$ } from "@legendapp/state/react";
 
 import { categories$ } from "@/lib/legend-state";
-import { lazy, useState } from "react";
+import { useState } from "react";
 import { toast } from "sonner";
 import { Header } from "@/components/header";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { NativeSelect } from "@/components/ui/native-select";
-const Calendar = lazy(() =>
-  import("@/components/ui/calendar").then((module) => ({
-    default: module.Calendar,
-  }))
-);
+
 const searchSchema = z.object({
   filterAccount: z.string().check(z.minLength(1, "Filter Account is required")),
   filterType: z
@@ -546,15 +542,11 @@ function TransactionForm({
             <FormItem>
               <FormLabel>Transaction Date</FormLabel>
               <FormControl>
-                <Calendar
+                <Input
+                  type="date"
+                  value={field.value}
+                  onChange={field.onChange}
                   className="w-full"
-                  mode="single"
-                  selected={new Date(field.value)}
-                  onSelect={(value) => {
-                    if (value) {
-                      field.onChange(value.toISOString());
-                    }
-                  }}
                 />
               </FormControl>
               <FormDescription>

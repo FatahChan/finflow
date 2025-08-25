@@ -17,6 +17,7 @@ import {
 import { useMemo } from "react";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { Header } from "@/components/header";
+import { TrendingUp, TrendingDown, BarChart3 } from "lucide-react";
 import { useReactPWAInstall } from "@/components/pwa-install";
 
 export const Route = createFileRoute("/dashboard/home")({
@@ -44,14 +45,44 @@ export default function HomePage() {
         : transaction.account;
 
       const currency = currencyValidator.parse(account!.currency);
+      const amount = transaction.type === "credit" ? transaction.amount : -transaction.amount;
       if (account?.currency === defaultCurrency) {
-        return acc + transaction.amount;
+        return acc + amount;
       } else {
-        return acc + transaction.amount * exchangeRates[currency];
+        return acc + amount * exchangeRates[currency];
       }
     }, 0);
   }, [transactions, isLoading, defaultCurrency, exchangeRates]);
   const totalBalance = use$(totalBalance$);
+
+  // Calculate this month's income and expenses
+  const thisMonthSummary = useMemo(() => {
+    if (!transactions || isLoading) return { income: 0, expenses: 0 };
+    
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    
+    return transactions
+      .filter(transaction => new Date(transaction.transactionAt) >= startOfMonth)
+      .reduce((acc, transaction) => {
+        const account = Array.isArray(transaction.account)
+          ? transaction.account[0]
+          : transaction.account;
+
+        const currency = currencyValidator.parse(account!.currency);
+        let amount = transaction.amount;
+        if (account?.currency !== defaultCurrency) {
+          amount = amount * exchangeRates[currency];
+        }
+
+        if (transaction.type === "credit") {
+          acc.income += amount;
+        } else {
+          acc.expenses += amount;
+        }
+        return acc;
+      }, { income: 0, expenses: 0 });
+  }, [transactions, isLoading, defaultCurrency, exchangeRates]);
 
   const { isInstalled } = useReactPWAInstall();
   return (
@@ -76,6 +107,53 @@ export default function HomePage() {
             </div>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Income & Expenses Summary */}
+      <div className="px-4 pb-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-foreground">
+            This Month
+          </h2>
+          <Button size="sm" variant="outline" onClick={() => window.location.href = '/dashboard/analytics'}>
+            <BarChart3 className="h-4 w-4 mr-1" />
+            View Analytics
+          </Button>
+        </div>
+        
+        <div className="grid grid-cols-2 gap-4">
+          <Card>
+            <CardContent className="pt-0">
+              <div className="flex items-center space-x-2">
+                <TrendingUp className="h-5 w-5 text-green-500" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">Income</p>
+                  <Money 
+                    amount={thisMonthSummary.income} 
+                    currency={defaultCurrency}
+                    className="text-green-600 font-semibold"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardContent className="pt-0">
+              <div className="flex items-center space-x-2">
+                <TrendingDown className="h-5 w-5 text-red-500" />
+                <div className="flex-1">
+                  <p className="text-sm text-muted-foreground">Expenses</p>
+                  <Money 
+                    amount={thisMonthSummary.expenses} 
+                    currency={defaultCurrency}
+                    className="text-red-600 font-semibold"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Recent Transactions */}

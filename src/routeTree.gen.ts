@@ -18,6 +18,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DashboardTransactionsRouteImport } from './routes/dashboard.transactions'
 import { Route as DashboardSettingsRouteImport } from './routes/dashboard.settings'
 import { Route as DashboardHomeRouteImport } from './routes/dashboard.home'
+import { Route as DashboardAnalyticsRouteImport } from './routes/dashboard.analytics'
 import { Route as DashboardAccountsRouteImport } from './routes/dashboard.accounts'
 
 const TermsRoute = TermsRouteImport.update({
@@ -65,6 +66,11 @@ const DashboardHomeRoute = DashboardHomeRouteImport.update({
   path: '/home',
   getParentRoute: () => DashboardRoute,
 } as any)
+const DashboardAnalyticsRoute = DashboardAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => DashboardRoute,
+} as any)
 const DashboardAccountsRoute = DashboardAccountsRouteImport.update({
   id: '/accounts',
   path: '/accounts',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/home': typeof DashboardHomeRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/home': typeof DashboardHomeRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/privacy': typeof PrivacyRoute
   '/terms': typeof TermsRoute
   '/dashboard/accounts': typeof DashboardAccountsRoute
+  '/dashboard/analytics': typeof DashboardAnalyticsRoute
   '/dashboard/home': typeof DashboardHomeRoute
   '/dashboard/settings': typeof DashboardSettingsRoute
   '/dashboard/transactions': typeof DashboardTransactionsRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/dashboard/accounts'
+    | '/dashboard/analytics'
     | '/dashboard/home'
     | '/dashboard/settings'
     | '/dashboard/transactions'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/dashboard/accounts'
+    | '/dashboard/analytics'
     | '/dashboard/home'
     | '/dashboard/settings'
     | '/dashboard/transactions'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/privacy'
     | '/terms'
     | '/dashboard/accounts'
+    | '/dashboard/analytics'
     | '/dashboard/home'
     | '/dashboard/settings'
     | '/dashboard/transactions'
@@ -221,6 +233,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DashboardHomeRouteImport
       parentRoute: typeof DashboardRoute
     }
+    '/dashboard/analytics': {
+      id: '/dashboard/analytics'
+      path: '/analytics'
+      fullPath: '/dashboard/analytics'
+      preLoaderRoute: typeof DashboardAnalyticsRouteImport
+      parentRoute: typeof DashboardRoute
+    }
     '/dashboard/accounts': {
       id: '/dashboard/accounts'
       path: '/accounts'
@@ -233,6 +252,7 @@ declare module '@tanstack/react-router' {
 
 interface DashboardRouteChildren {
   DashboardAccountsRoute: typeof DashboardAccountsRoute
+  DashboardAnalyticsRoute: typeof DashboardAnalyticsRoute
   DashboardHomeRoute: typeof DashboardHomeRoute
   DashboardSettingsRoute: typeof DashboardSettingsRoute
   DashboardTransactionsRoute: typeof DashboardTransactionsRoute
@@ -240,6 +260,7 @@ interface DashboardRouteChildren {
 
 const DashboardRouteChildren: DashboardRouteChildren = {
   DashboardAccountsRoute: DashboardAccountsRoute,
+  DashboardAnalyticsRoute: DashboardAnalyticsRoute,
   DashboardHomeRoute: DashboardHomeRoute,
   DashboardSettingsRoute: DashboardSettingsRoute,
   DashboardTransactionsRoute: DashboardTransactionsRoute,
