@@ -1,5 +1,12 @@
 # Changelog
 
+# [0.9.0](https://github.com/FatahChan/finflow/compare/0.8.2...0.9.0) (2025-08-25)
+
+
+### Features
+
+* implement analytics page with income/expense charts and metrics ([b6bbda9](https://github.com/FatahChan/finflow/commit/b6bbda94fef140133681284d7b3640a575cfb854))
+
 ## [0.8.2](https://github.com/FatahChan/finflow/compare/0.8.1...0.8.2) (2025-08-24)
 
 ## [0.8.1](https://github.com/FatahChan/finflow/compare/0.8.0...0.8.1) (2025-08-24)
