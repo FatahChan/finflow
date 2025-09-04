@@ -14,7 +14,7 @@ export default defineConfig({
     tsConfigPaths(),
     tanstackStart({
       customViteReactPlugin: true,
-      target: "vercel",
+      target: process.env.TARGET || "vercel",
       spa: {
         enabled: true,
       },

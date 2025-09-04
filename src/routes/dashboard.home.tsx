@@ -34,15 +34,13 @@ export const Route = createFileRoute("/dashboard/home")({
 export default function HomePage() {
   const { data, isLoading } = db.useQuery(transactionsWithAccountQuery);
   const transactions = data?.transactions;
-  const defaultCurrency = use$(defaultCurrency$.get());
-  const exchangeRates = use$(currencies$.exchangeRates.get());
+  const defaultCurrency = use$(defaultCurrency$);
+  const exchangeRates = use$(currencies$.exchangeRates);
 
   const totalBalance$ = useMemo(() => {
-    if (!transactions || isLoading) return 0;
+    if (!transactions || isLoading || !exchangeRates) return 0;
     return transactions.reduce((acc, transaction) => {
-      const account = Array.isArray(transaction.account)
-        ? transaction.account[0]
-        : transaction.account;
+      const account = transaction.account;
 
       const currency = currencyValidator.parse(account!.currency);
       const amount = transaction.type === "credit" ? transaction.amount : -transaction.amount;
@@ -57,7 +55,7 @@ export default function HomePage() {
 
   // Calculate this month's income and expenses
   const thisMonthSummary = useMemo(() => {
-    if (!transactions || isLoading) return { income: 0, expenses: 0 };
+    if (!transactions || isLoading || !exchangeRates || !defaultCurrency) return { income: 0, expenses: 0 };
     
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -65,9 +63,8 @@ export default function HomePage() {
     return transactions
       .filter(transaction => new Date(transaction.transactionAt) >= startOfMonth)
       .reduce((acc, transaction) => {
-        const account = Array.isArray(transaction.account)
-          ? transaction.account[0]
-          : transaction.account;
+        console.log({transaction})
+        const account = transaction.account;
 
         const currency = currencyValidator.parse(account!.currency);
         let amount = transaction.amount;

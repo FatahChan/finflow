@@ -746,14 +746,11 @@ export const currencies$ = observable(
       fetch(
         `https://latest.currency-api.pages.dev/v1/currencies/${defaultCurrency$.get()}.json`
       ).then((res) => res.json()),
-    mode: "set",
-    syncMode: "auto",
     persist: {
       name: "currency",
-      readonly: true,
     },
     subscribe: ({ refresh, value$ }) => {
-      const value = value$.get();
+      const value = value$.peek();
       if (new Date(value.date).toDateString() !== new Date().toDateString()) {
         refresh();
       }
@@ -765,6 +762,9 @@ export const currencies$ = observable(
           exchangeRates: value[defaultCurrency$.get()],
         };
       },
+    },
+    retry: {
+      times: 1,
     },
     initial: initialExchangeRates,
   })

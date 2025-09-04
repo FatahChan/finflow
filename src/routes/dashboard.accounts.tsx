@@ -38,7 +38,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { db } from "@/lib/instant-db";
 import {
   accountsWithTransactionsQuery,
@@ -224,6 +224,7 @@ function AccountDialog({
   >["accounts"][number];
   children?: React.ReactNode;
 }) {
+  const [open, setOpen] = useState(false);
   const user = db.useUser();
   const handleSubmit = (data: AccountZodType) => {
     if (account) {
@@ -235,6 +236,7 @@ function AccountDialog({
       );
     } else {
       const _id = id();
+
       db.transact([
         db.tx.accounts[_id].create({
           ...data,
@@ -242,11 +244,14 @@ function AccountDialog({
         db.tx.accounts[_id].link({
           user: user!.id,
         }),
-      ]);
+      ]).then(() => {
+        console.log("Account created");
+        setOpen(false);
+      });
     }
   };
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         {children ? (
           children
@@ -267,11 +272,9 @@ function AccountDialog({
           </DialogTitle>
         </DialogHeader>
         <AccountForm onSubmit={handleSubmit}>
-          <DialogClose asChild>
             <Button type="submit" className="flex-1">
               {account ? "Update" : "Create"}
             </Button>
-          </DialogClose>
           <DialogClose asChild>
             <Button type="button" variant="outline" className="flex-1">
               Cancel
