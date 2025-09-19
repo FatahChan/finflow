@@ -43,29 +43,37 @@ export function GoogleLoginButton() {
         theme="filled_blue"
         onError={() => toast.error("Login failed")}
         onSuccess={({ credential }) => {
-          const jwt: jwtDecoded = jose.decodeJwt(credential!);
+          if (!credential) {
+            throw new Error("Failed to get credential");
+          }
+          const jwt: jwtDecoded = jose.decodeJwt(credential);
           db.auth
             .signInWithIdToken({
               clientName: GOOGLE_CLIENT_NAME,
-              idToken: credential!,
+              idToken: credential,
               nonce,
             })
             .then(() => db.getAuth())
-            .then((auth) => {
+            .then(async (auth) => {
+              if (!auth) {
+                throw new Error("Failed to get auth");
+              }
               const _id = id();
-              db.transact([
+              await db.transact([
                 db.tx.profiles[_id].create({
                   name: jwt.name,
                   picture: jwt.picture,
                 }),
                 db.tx.profiles[_id].link({
-                  user: auth!.id,
+                  user: auth.id,
                 }),
               ]);
             })
             .then(() => navigate({ to: "/dashboard/home" }))
-            .catch((err) => {
-              toast.error(err.body?.message);
+            .catch((err: unknown) => {
+              if (err instanceof Error) {
+                toast.error(err.message);
+              }
             });
         }}
       />

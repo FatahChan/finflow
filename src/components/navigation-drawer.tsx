@@ -23,7 +23,7 @@ export function NavigationDrawer() {
     profiles: {
       $: {
         where: {
-          "user.id": user?.id,
+          "user.id": user.id,
         },
       },
     },
@@ -68,7 +68,7 @@ export function NavigationDrawer() {
           </Avatar>
           <div className="w-fit">
             <SheetTitle>{profile?.name}</SheetTitle>
-            <SheetDescription>{user?.email}</SheetDescription>
+            <SheetDescription>{user.email}</SheetDescription>
           </div>
         </SheetHeader>
 
@@ -76,28 +76,28 @@ export function NavigationDrawer() {
           <Button
             variant="ghost"
             className="justify-start"
-            onClick={() => navigate({ to: "/dashboard/settings" })}
+            onClick={() =>{void navigate({ to: "/dashboard/settings" })}}
           >
             Settings
           </Button>
           <Button
             variant="ghost"
             className="justify-start"
-            onClick={() => navigate({ to: "/about" })}
+            onClick={() =>{void navigate({ to: "/about" })}}
           >
             About
           </Button>
           <Button
             variant="ghost"
             className="justify-start"
-            onClick={() => navigate({ to: "/privacy" })}
+            onClick={() =>{void navigate({ to: "/privacy" })}}
           >
             Privacy Policy
           </Button>
           <Button
             variant="ghost"
             className="justify-start"
-            onClick={() => navigate({ to: "/terms" })}
+            onClick={() =>{void navigate({ to: "/terms" })}}
           >
             Terms of Service
           </Button>
@@ -105,7 +105,7 @@ export function NavigationDrawer() {
             <Button
               className="justify-start"
               variant={"secondary"}
-              onClick={() => handleInstall()}
+              onClick={() => { handleInstall(); }}
             >
               Install
             </Button>
@@ -116,8 +116,8 @@ export function NavigationDrawer() {
           <Button
             variant={"destructive"}
             onClick={() => {
-              db.auth.signOut().then(() => {
-                navigate({ to: "/login" });
+              void db.auth.signOut().then(() => {
+                void navigate({ to: "/login" });
               });
             }}
           >

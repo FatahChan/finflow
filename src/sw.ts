@@ -7,5 +7,5 @@ cleanupOutdatedCaches()
 precacheAndRoute(self.__WB_MANIFEST)
 
 
-self.skipWaiting()
+void self.skipWaiting()
 clientsClaim()

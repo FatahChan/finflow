@@ -188,7 +188,7 @@ export default function AccountsPage() {
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
                               onClick={() =>
-                                db.transact(db.tx.accounts[account.id].delete())
+                                void db.transact(db.tx.accounts[account.id].delete())
                               }
                               className="bg-destructive hover:bg-destructive/80"
                             >
@@ -228,7 +228,7 @@ function AccountDialog({
   const user = db.useUser();
   const handleSubmit = (data: AccountZodType) => {
     if (account) {
-      db.transact(
+      void db.transact(
         db.tx.accounts[account.id].update({
           ...account,
           ...data,
@@ -237,12 +237,12 @@ function AccountDialog({
     } else {
       const _id = id();
 
-      db.transact([
+      void db.transact([
         db.tx.accounts[_id].create({
           ...data,
         }),
         db.tx.accounts[_id].link({
-          user: user!.id,
+          user: user.id,
         }),
       ]).then(() => {
         setOpen(false);
@@ -302,7 +302,7 @@ function AccountForm({
     <Form {...form}>
       <form
         onSubmit={(e) => {
-          form.handleSubmit(onSubmit)(e);
+          void form.handleSubmit(onSubmit)(e);
         }}
         className="space-y-4"
       >

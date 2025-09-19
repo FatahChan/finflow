@@ -58,7 +58,7 @@ export function TagInput({
             {tag}
             <button
               type="button"
-              onClick={() => removeTag(tag)}
+              onClick={() => { removeTag(tag); }}
               className="ml-1 hover:bg-destructive/20 rounded-full p-1 touch-manipulation"
               aria-label={`Remove ${tag}`}
             >
@@ -69,7 +69,7 @@ export function TagInput({
         <Input
           type="text"
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) => { setInputValue(e.target.value); }}
           onKeyDown={handleKeyDown}
           onBlur={handleInputBlur}
           placeholder={value.length === 0 ? placeholder : ""}

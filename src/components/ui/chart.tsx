@@ -132,11 +132,11 @@ function ChartTooltipContent({
     }
 
     const [item] = payload
-    const key = `${labelKey || item?.dataKey || item?.name || "value"}`
+    const key = String(labelKey || item.dataKey || item.name || "value")
     const itemConfig = getPayloadConfigFromPayload(config, item, key)
     const value =
       !labelKey && typeof label === "string"
-        ? config[label as keyof typeof config]?.label || label
+        ? config[label].label || label
         : itemConfig?.label
 
     if (labelFormatter) {
@@ -178,10 +178,11 @@ function ChartTooltipContent({
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
         {payload.map((item, index) => {
-          const key = `${nameKey || item.name || item.dataKey || "value"}`
+          const key = String(nameKey || item.name || item.dataKey || "value")
           const itemConfig = getPayloadConfigFromPayload(config, item, key)
-          const indicatorColor = color || item.payload.fill || item.color
-
+          /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+          const indicatorColor = color || String(item.payload.fill) || item.color
+          /* eslint-enable @typescript-eslint/no-unsafe-member-access */
           return (
             <div
               key={item.dataKey}
@@ -190,7 +191,7 @@ function ChartTooltipContent({
                 indicator === "dot" && "items-center"
               )}
             >
-              {formatter && item?.value !== undefined && item.name ? (
+              {formatter && item.value !== undefined && item.name ? (
                 formatter(item.value, item.name, item, index, item.payload)
               ) : (
                 <>
@@ -274,12 +275,12 @@ function ChartLegendContent({
       )}
     >
       {payload.map((item) => {
-        const key = `${nameKey || item.dataKey || "value"}`
+        const key = String(nameKey || item.dataKey || "value")
         const itemConfig = getPayloadConfigFromPayload(config, item, key)
 
         return (
           <div
-            key={item.value}
+            key={String(item.value)}
             className={cn(
               "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3"
             )}
@@ -338,7 +339,7 @@ function getPayloadConfigFromPayload(
 
   return configLabelKey in config
     ? config[configLabelKey]
-    : config[key as keyof typeof config]
+    : config[key]
 }
 
 export {

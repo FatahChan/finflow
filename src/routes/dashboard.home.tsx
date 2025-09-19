@@ -38,13 +38,14 @@ export default function HomePage() {
   const exchangeRates = use$(currencies$.exchangeRates);
 
   const totalBalance$ = useMemo(() => {
-    if (!transactions || isLoading || !exchangeRates) return 0;
+    if (!transactions || isLoading) return 0;
     return transactions.reduce((acc, transaction) => {
       const account = transaction.account;
+      if (!account) return acc;
 
-      const currency = currencyValidator.parse(account!.currency);
+      const currency = currencyValidator.parse(account.currency);
       const amount = transaction.type === "credit" ? transaction.amount : -transaction.amount;
-      if (account?.currency === defaultCurrency) {
+      if (account.currency === defaultCurrency) {
         return acc + amount;
       } else {
         return acc + amount * exchangeRates[currency];
@@ -55,7 +56,7 @@ export default function HomePage() {
 
   // Calculate this month's income and expenses
   const thisMonthSummary = useMemo(() => {
-    if (!transactions || isLoading || !exchangeRates || !defaultCurrency) return { income: 0, expenses: 0 };
+    if (!transactions || isLoading) return { income: 0, expenses: 0 };
     
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -64,10 +65,12 @@ export default function HomePage() {
       .filter(transaction => new Date(transaction.transactionAt) >= startOfMonth)
       .reduce((acc, transaction) => {
         const account = transaction.account;
+        if (!account) return acc;
 
-        const currency = currencyValidator.parse(account!.currency);
+
+        const currency = currencyValidator.parse(account.currency);
         let amount = transaction.amount;
-        if (account?.currency !== defaultCurrency) {
+        if (account.currency !== defaultCurrency) {
           amount = amount * exchangeRates[currency];
         }
 
@@ -192,6 +195,7 @@ export default function HomePage() {
         ) : (
           <div className="space-y-3">
             {transactions.slice(0, 3).map((transaction) => {
+              if (!transaction.account) return null;
               return (
                 <Card key={transaction.id}>
                   <CardContent className="pt-0">
@@ -203,11 +207,11 @@ export default function HomePage() {
                           </h3>
                           <div className="flex items-center gap-1">
                             <p className="text-sm text-muted-foreground truncate">
-                              {transaction.account?.name}
+                              {transaction.account.name}
                             </p>
                             <Money
                               amount={transaction.amount}
-                              currency={transaction.account!.currency}
+                              currency={transaction.account.currency}
                               positive={transaction.type === "credit"}
                             />
                           </div>

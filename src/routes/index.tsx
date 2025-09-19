@@ -216,7 +216,7 @@ function LandingPage() {
               <div className="bg-gradient-to-r from-primary to-secondary rounded-2xl p-8 text-primary-foreground">
                 <div className="flex items-center mb-4">
                   <div className="flex text-accent">
-                    {[...Array(5)].map((_, i) => (
+                    {Array(5).fill(0).map((_, i) => (
                       <Star key={i} className="h-5 w-5 fill-current" />
                     ))}
                   </div>

@@ -20,7 +20,7 @@ export function Header({
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => router.history.back()}
+            onClick={() => { router.history.back(); }}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>

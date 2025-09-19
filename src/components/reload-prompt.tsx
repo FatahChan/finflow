@@ -44,7 +44,7 @@ function ReloadPrompt() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={() => handleInstall()}>
+          <AlertDialogAction onClick={() => { handleInstall(); }}>
             Install
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -4,6 +4,9 @@ import {
   } from '@tanstack/react-start/server'
   import { createRouter } from './router'
    
-  export default createStartHandler({
+  const handler = createStartHandler({
     createRouter,
-  })(defaultStreamHandler)
+  });
+  
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+  export default handler(defaultStreamHandler)

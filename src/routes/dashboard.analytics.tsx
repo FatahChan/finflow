@@ -128,24 +128,25 @@ export default function AnalyticsPage() {
 
     filteredTransactions.forEach((transaction) => {
       const date = new Date(transaction.transactionAt);
-      const monthKey = `${date.getFullYear()}-${String(
+      const monthKey = `${date.getFullYear().toString()}-${String(
         date.getMonth() + 1
       ).padStart(2, "0")}`;
 
-      if (!monthlyMap.has(monthKey)) {
-        monthlyMap.set(monthKey, { income: 0, expenses: 0 });
-      }
-
-      const data = monthlyMap.get(monthKey)!;
       const amount = convertAmount(
         transaction.amount,
         transaction.account?.currency || defaultCurrency
       );
 
       if (transaction.type === "credit") {
-        data.income += amount;
+        monthlyMap.set(monthKey, {
+          income: (monthlyMap.get(monthKey)?.income || 0) + amount,
+          expenses: monthlyMap.get(monthKey)?.expenses || 0,
+        });
       } else {
-        data.expenses += amount;
+        monthlyMap.set(monthKey, {
+          income: monthlyMap.get(monthKey)?.income || 0,
+          expenses: (monthlyMap.get(monthKey)?.expenses || 0) + amount,
+        });
       }
     });
 
@@ -261,7 +262,7 @@ export default function AnalyticsPage() {
         <NativeSelect
           value={filters.account}
           onChange={(e) =>
-            setFilters((prev) => ({ ...prev, account: e.target.value }))
+            { setFilters((prev) => ({ ...prev, account: e.target.value })); }
           }
           className="w-full text-sm"
         >
@@ -276,7 +277,7 @@ export default function AnalyticsPage() {
         <NativeSelect
           value={filters.period}
           onChange={(e) =>
-            setFilters((prev) => ({ ...prev, period: e.target.value }))
+            { setFilters((prev) => ({ ...prev, period: e.target.value })); }
           }
           className="w-full  text-sm"
         >
@@ -289,7 +290,7 @@ export default function AnalyticsPage() {
         <NativeSelect
           value={filters.type}
           onChange={(e) =>
-            setFilters((prev) => ({ ...prev, type: e.target.value }))
+            { setFilters((prev) => ({ ...prev, type: e.target.value })); }
           }
           className="w-full text-sm"
         >
@@ -421,7 +422,7 @@ export default function AnalyticsPage() {
                           >
                             {expenseCategoryData.map((_entry, index) => (
                               <Cell
-                                key={`cell-${index}`}
+                                key={_entry.category}
                                 fill={COLORS[index % COLORS.length]}
                               />
                             ))}
@@ -429,7 +430,7 @@ export default function AnalyticsPage() {
                           <ChartTooltip
                             content={({ active, payload }) => {
                               if (active && payload && payload.length) {
-                                const data = payload[0].payload;
+                                const data = payload[0].payload as { category: string; amount: number };
                                 return (
                                   <div className="bg-background border rounded-lg p-2 shadow-lg">
                                     <p className="font-medium">{data.category}</p>
@@ -504,7 +505,7 @@ export default function AnalyticsPage() {
                           >
                             {incomeCategoryData.map((_entry, index) => (
                               <Cell
-                                key={`cell-${index}`}
+                                key={_entry.category}
                                 fill={COLORS[index % COLORS.length]}
                               />
                             ))}
@@ -512,7 +513,7 @@ export default function AnalyticsPage() {
                           <ChartTooltip
                             content={({ active, payload }) => {
                               if (active && payload && payload.length) {
-                                const data = payload[0].payload;
+                                const data = payload[0].payload as { category: string; amount: number };
                                 return (
                                   <div className="bg-background border rounded-lg p-2 shadow-lg">
                                     <p className="font-medium">{data.category}</p>

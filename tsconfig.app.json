@@ -27,11 +27,7 @@
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true,
-
-    "types": [
-      "vite-plugin-pwa/client"
-    ]
+    "noUncheckedSideEffectImports": true
   },
 "include": ["src/**/*"]
 }

@@ -20,7 +20,7 @@ interface InstallDialogProps {
 
 export default function InstallDialog(props: InstallDialogProps) {
   return (
-    <Dialog open={props.open} onOpenChange={(open) => !open && props.onClose()}>
+    <Dialog open={props.open} onOpenChange={(open) => {if (!open) {props.onClose()}}}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{props.title || "Install Web App"}</DialogTitle>

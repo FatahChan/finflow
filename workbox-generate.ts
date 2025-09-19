@@ -37,5 +37,5 @@ export async function workboxGenerate() {
   if (warnings.length) {
     console.warn('[workbox] warnings:', warnings)
   }
-  console.log(`[workbox] generated sw.js with ${count} precached files (${(size/1024).toFixed(1)} KiB)`)
+  console.log(`[workbox] generated sw.js with ${count.toString()} precached files (${(size/1024).toFixed(1)} KiB)`)
 }

@@ -32,7 +32,7 @@ interface AwaitingPromise {
 const ReactPWAInstallContext = createContext<PWAInstallContextValue>({
   supported: () => false,
   isInstalled: () => false,
-  pwaInstall: () => Promise.reject(),
+  pwaInstall: () => Promise.reject(new Error("Not supported")),
   isCaptured: false,
 });
 
@@ -68,7 +68,7 @@ export const ReactPWAInstallProvider = ({
   const isInstalled = useCallback(() => {
     if (
       // @ts-expect-error standalone is not a standard property, only available on iOS
-      window.navigator?.standalone === true ||
+      window.navigator.standalone === true ||
       window.matchMedia("(display-mode: standalone)").matches
     ) {
       logger("isInstalled: true. Already in standalone mode");
@@ -111,9 +111,11 @@ export const ReactPWAInstallProvider = ({
     if (deferredPrompt.current != null) {
       return deferredPrompt.current
         .prompt()
-        .then(() => deferredPrompt.current!.userChoice)
+        .then(() => {if (deferredPrompt.current) {
+          return deferredPrompt.current.userChoice
+        }})
         .then((choiceResult) => {
-          if (choiceResult.outcome === "accepted") {
+          if (choiceResult?.outcome === "accepted") {
             logger("PWA native installation successful");
             if (awaitingPromiseRef.current) {
               awaitingPromiseRef.current.resolve();
@@ -125,7 +127,7 @@ export const ReactPWAInstallProvider = ({
             }
           }
         })
-        .catch((err) => {
+        .catch((err: unknown) => {
           if (awaitingPromiseRef.current) {
             awaitingPromiseRef.current.resolve();
           }
@@ -175,7 +177,7 @@ export const ReactPWAInstallProvider = ({
 
       <InstallDialog
         open={Boolean(dialogState)}
-        onSubmit={handleInstall}
+        onSubmit={() => void handleInstall()}
         onClose={handleClose}
         platform={platform}
         {...dialogState}

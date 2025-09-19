@@ -18,7 +18,7 @@ export const deleteUser = createServerFn({ method: 'POST' })
     const user = await db.auth.getUser({
         refresh_token: refreshToken,
     });
-    if (!user) {
+    if (!user.id) {
       throw new Error('User not found')
     }
     return refreshToken

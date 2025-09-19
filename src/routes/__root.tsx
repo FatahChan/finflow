@@ -58,7 +58,7 @@ export const Route = createRootRoute({
 function RootComponent() {
   useEffect(() => {
     // Register service worker on app startup
-    registerServiceWorker();
+    void registerServiceWorker();
   }, []);
 
   return (

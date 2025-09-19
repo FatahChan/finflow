@@ -121,7 +121,7 @@ export default function TransactionsPage() {
           <NativeSelect
             value={filterAccount}
             onChange={(e) =>
-              navigate({
+              void navigate({
                 search: { filterAccount: e.target.value, filterType },
               })
             }
@@ -144,7 +144,7 @@ export default function TransactionsPage() {
           <NativeSelect
             value={filterType}
             onChange={(e) =>
-              navigate({
+              void navigate({
                 search: {
                   filterAccount,
                   filterType: e.target.value as "all" | "credit" | "debit",
@@ -198,6 +198,9 @@ export default function TransactionsPage() {
         ) : (
           <div className="space-y-4">
             {filteredTransactions.map((transaction) => {
+              if (!transaction.account) {
+                return null;
+              }
               return (
                 <Card key={transaction.id}>
                   <CardContent className="pt-0">
@@ -209,11 +212,11 @@ export default function TransactionsPage() {
                           </h3>
                           <div className="flex items-center gap-1">
                             <p className="text-sm text-muted-foreground truncate">
-                              {transaction.account?.name}
+                              {transaction.account.name}
                             </p>
                             <Money
                               amount={transaction.amount}
-                              currency={transaction.account!.currency}
+                              currency={transaction.account.currency}
                               positive={transaction.type === "credit"}
                             />
                           </div>
@@ -265,7 +268,7 @@ export default function TransactionsPage() {
                                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                                 <AlertDialogAction
                                   onClick={() =>
-                                    db.transact(
+                                    void db.transact(
                                       db.tx.transactions[
                                         transaction.id
                                       ].delete()
@@ -318,8 +321,8 @@ function TransactionDialog({
   const handleSubmit = ({ accountId, ...data }: TransactionsFormZodType) => {
     try {
       if (transaction) {
-        const { account: _, ...transactionProps } = transaction ?? {};
-        db.transact(
+        const { account: _, ...transactionProps } = transaction;
+        void db.transact(
           db.tx.transactions[transaction.id].update({
             ...transactionProps,
             ...data,
@@ -327,7 +330,7 @@ function TransactionDialog({
         );
       } else {
         const _id = id();
-        db.transact([
+        void db.transact([
           db.tx.transactions[_id].create({
             ...data,
           }),
@@ -337,8 +340,12 @@ function TransactionDialog({
         ]);
       }
       setOpen(false);
-    } catch (error) {
-      toast.error(`Failed to create transaction: ${error}`);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Failed to create transaction: ${error.message}`);
+      }else{
+        toast.error(`Failed to create transaction: ${String(error)}`);
+      }
     }
   };
 
@@ -420,7 +427,7 @@ function TransactionForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={void form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="accountId"
@@ -470,8 +477,8 @@ function TransactionForm({
               <FormLabel>Amount</FormLabel>
               <Input
                 {...field}
-                onChange={(e) => field.onChange(Number(e.target.value))}
-                value={Number(field.value) || undefined}
+                onChange={(e) => { field.onChange(Number(e.target.value)); }}
+                value={field.value || undefined}
                 type="number"
                 placeholder="0.00"
                 inputMode="decimal"
@@ -492,7 +499,7 @@ function TransactionForm({
             <FormItem>
               <FormLabel>Type</FormLabel>
               <NativeSelect
-                onChange={(e) => field.onChange(e.target.value)}
+                onChange={(e) => { field.onChange(e.target.value); }}
                 value={field.value}
                 className="w-full"
               >
@@ -515,7 +522,7 @@ function TransactionForm({
               <FormLabel>Category</FormLabel>
               <FormControl>
                 <NativeSelect
-                  onChange={(e) => field.onChange(e.target.value)}
+                  onChange={(e) => { field.onChange(e.target.value); }}
                   value={field.value}
                   className="w-full"
                 >

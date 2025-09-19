@@ -65,7 +65,7 @@ export default function SettingsPage() {
             <div className="flex items-center justify-between">
               <div>
                 <Label className="text-sm font-medium">Email</Label>
-                <p className="text-sm text-muted-foreground">{user?.email}</p>
+                <p className="text-sm text-muted-foreground">{user.email}</p>
               </div>
             </div>
           </CardContent>
@@ -108,7 +108,7 @@ export default function SettingsPage() {
               <Switch
                 checked={theme === "dark"}
                 onCheckedChange={(checked) =>
-                  setTheme(checked ? "dark" : "light")
+                  { setTheme(checked ? "dark" : "light"); }
                 }
               />
             </div>
@@ -161,7 +161,7 @@ export default function SettingsPage() {
                 {() => (
                   <TagInput
                     value={categories$.credit.get()}
-                    onChange={(tags) => categories$.credit.set(tags)}
+                    onChange={(tags) => { categories$.credit.set(tags); }}
                     placeholder="Add income category..."
                   />
                 )}
@@ -174,7 +174,7 @@ export default function SettingsPage() {
                 {() => (
                   <TagInput
                     value={categories$.debit.get()}
-                    onChange={(tags) => categories$.debit.set(tags)}
+                    onChange={(tags) => { categories$.debit.set(tags); }}
                     placeholder="Add expense category..."
                   />
                 )}
@@ -271,10 +271,14 @@ function DeleteAllDataButton({ ...props }: ComponentProps<typeof Button>) {
                 })
                   .then(async () => {
                     await db.auth.signOut();
-                    navigate({ to: "/login" });
+                    void navigate({ to: "/login" });
                   })
-                  .catch((err) => {
-                    toast.error(err.message);
+                  .catch((err: unknown) => {
+                    if (err instanceof Error) {
+                      toast.error(err.message);
+                    }else{
+                      toast.error(String(err));
+                    }
                   });
               }}
               variant="destructive"
