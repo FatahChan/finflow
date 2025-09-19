@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.1](https://github.com/FatahChan/finflow/compare/0.9.0...0.9.1) (2025-09-19)
+
+
+### Bug Fixes
+
+* auto-close dialog after account creation and handle currency exchange edge cases ([18f538d](https://github.com/FatahChan/finflow/commit/18f538d69d744208cc91eee94b494fe14ae7087c))
+
 # [0.9.0](https://github.com/FatahChan/finflow/compare/0.8.2...0.9.0) (2025-08-25)
 
 
