@@ -64,7 +64,7 @@ export const Route = createFileRoute("/dashboard/accounts")({
   }),
 });
 
-export default function AccountsPage() {
+function AccountsPage() {
   const { data, isLoading } = db.useQuery(accountsWithTransactionsQuery);
   const accounts = data?.accounts;
 

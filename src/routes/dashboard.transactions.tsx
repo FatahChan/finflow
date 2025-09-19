@@ -73,7 +73,7 @@ export const Route = createFileRoute("/dashboard/transactions")({
   }),
 });
 
-export default function TransactionsPage() {
+function TransactionsPage() {
   const { filterAccount, filterType } = Route.useSearch();
   const navigate = Route.useNavigate();
 

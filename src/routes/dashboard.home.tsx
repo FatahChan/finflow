@@ -31,7 +31,7 @@ export const Route = createFileRoute("/dashboard/home")({
   }),
 });
 
-export default function HomePage() {
+function HomePage() {
   const { data, isLoading } = db.useQuery(transactionsWithAccountQuery);
   const transactions = data?.transactions;
   const defaultCurrency = use$(defaultCurrency$);

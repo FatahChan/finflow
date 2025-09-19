@@ -51,7 +51,7 @@ const COLORS = [
   "#82CA9D",
 ];
 
-export default function AnalyticsPage() {
+function AnalyticsPage() {
   const [filters, setFilters] = useState({
     account: "all",
     period: "6months",

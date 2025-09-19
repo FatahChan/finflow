@@ -46,7 +46,7 @@ export const Route = createFileRoute("/dashboard/settings")({
   }),
 });
 
-export default function SettingsPage() {
+function SettingsPage() {
   const user = db.useUser();
 
   const { theme, setTheme } = useTheme();

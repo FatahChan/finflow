@@ -15,7 +15,7 @@ export const Route = createFileRoute("/about")({
   }),
 });
 
-export default function AboutPage() {
+function AboutPage() {
   return (
     <div className="min-h-screen bg-background pb-20">
       <Header title="About" backButton />
