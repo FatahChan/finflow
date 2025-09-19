@@ -63,7 +63,6 @@ export default function HomePage() {
     return transactions
       .filter(transaction => new Date(transaction.transactionAt) >= startOfMonth)
       .reduce((acc, transaction) => {
-        console.log({transaction})
         const account = transaction.account;
 
         const currency = currencyValidator.parse(account!.currency);

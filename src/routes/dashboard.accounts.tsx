@@ -245,7 +245,6 @@ function AccountDialog({
           user: user!.id,
         }),
       ]).then(() => {
-        console.log("Account created");
         setOpen(false);
       });
     }
