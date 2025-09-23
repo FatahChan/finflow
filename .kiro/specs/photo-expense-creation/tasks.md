@@ -14,7 +14,7 @@
   - Add error handling for AI service failures
   - _Requirements: 2.1, 2.2, 2.4, 6.3_
 
-- [ ] 3. Create client-side photo capture components
+- [x] 3. Create client-side photo capture components
   - Build `PhotoCaptureStep` component with camera and file upload options
   - Implement image preview and validation on client side
   - Add responsive design for mobile camera access
