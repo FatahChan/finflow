@@ -75,6 +75,7 @@ export const processReceiptPhoto = createServerFn({ method: 'POST' })
             const transactionZodSchema = getTransactionZodSchema(categories);
 
             // Convert File to Buffer for AI processing
+            // Note: Image data is processed in memory only and not stored permanently
             const arrayBuffer = await imageFile.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
@@ -135,6 +136,9 @@ export const processReceiptPhoto = createServerFn({ method: 'POST' })
         } catch (error) {
             const processingTime = Date.now() - startTime;
 
+            // Note: No explicit cleanup needed as image data was processed in memory only
+            // Buffer will be garbage collected automatically
+            
             return {
                 success: false,
                 transactions: [],
