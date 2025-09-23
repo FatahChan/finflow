@@ -32,20 +32,20 @@ export function PhotoProcessingStep({
                 setIsProcessing(true);
                 setError(null);
 
-                // Simulate progress updates
+                // Progressive loading with realistic timing
                 const progressSteps = [
-                    { progress: 20, status: 'Uploading image...' },
-                    { progress: 40, status: 'Analyzing receipt...' },
-                    { progress: 60, status: 'Extracting transaction details...' },
-                    { progress: 80, status: 'Processing categories...' },
-                    { progress: 90, status: 'Finalizing results...' }
+                    { progress: 15, status: 'Uploading image...', delay: 300 },
+                    { progress: 35, status: 'Analyzing receipt...', delay: 800 },
+                    { progress: 55, status: 'Extracting transaction details...', delay: 1200 },
+                    { progress: 75, status: 'Processing categories...', delay: 600 },
+                    { progress: 90, status: 'Finalizing results...', delay: 400 }
                 ];
 
                 for (const step of progressSteps) {
                     if (cancelled) return;
                     setProgress(step.progress);
                     setStatus(step.status);
-                    await new Promise(resolve => setTimeout(resolve, 500));
+                    await new Promise(resolve => setTimeout(resolve, step.delay));
                 }
 
                 // Process the actual image
@@ -151,12 +151,33 @@ export function PhotoProcessingStep({
                             </div>
                         )}
 
-                        {/* Processing tips */}
+                        {/* Processing tips with skeleton loading effect */}
                         {isProcessing && !error && (
-                            <div className="text-xs text-muted-foreground space-y-1">
-                                <p>💡 <strong>Tip:</strong> Make sure the receipt is clearly visible and well-lit</p>
-                                <p>📱 <strong>Note:</strong> Processing may take 10-30 seconds depending on image complexity</p>
-                                <p>🔒 <strong>Privacy:</strong> Your image is processed securely and automatically deleted after processing</p>
+                            <div className="space-y-3">
+                                <div className="text-xs text-muted-foreground space-y-1">
+                                    <p>💡 <strong>Tip:</strong> Make sure the receipt is clearly visible and well-lit</p>
+                                    <p>📱 <strong>Note:</strong> Processing may take 10-30 seconds depending on image complexity</p>
+                                    <p>🔒 <strong>Privacy:</strong> Your image is processed securely and automatically deleted after processing</p>
+                                </div>
+                                
+                                {/* Skeleton preview of what's being processed */}
+                                <div className="mt-4 p-3 bg-muted/30 rounded-md">
+                                    <div className="text-xs text-muted-foreground mb-2">Processing will extract:</div>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center space-x-2">
+                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse" />
+                                            <span className="text-xs">Merchant name</span>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse" style={{ animationDelay: '0.2s' }} />
+                                            <span className="text-xs">Transaction amount</span>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <div className="w-2 h-2 bg-primary/60 rounded-full animate-pulse" style={{ animationDelay: '0.4s' }} />
+                                            <span className="text-xs">Date and category</span>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         )}
                     </div>

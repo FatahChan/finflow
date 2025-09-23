@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Camera, Upload, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { validateImage } from '@/lib/photo-processing-service';
+import { validateImage, compressImage } from '@/lib/photo-processing-service';
 
 interface PhotoCaptureStepProps {
     onImageSelected: (file: File) => void;
@@ -38,7 +38,7 @@ export function PhotoCaptureStep({ onImageSelected, onCancel }: PhotoCaptureStep
         };
     }, [preview]);
 
-    const handleFileSelect = (file: File | null) => {
+    const handleFileSelect = async (file: File | null) => {
         if (!file) return;
 
         setError(null);
@@ -50,18 +50,33 @@ export function PhotoCaptureStep({ onImageSelected, onCancel }: PhotoCaptureStep
             return;
         }
 
-        // Create preview
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            setPreview(e.target?.result as string);
-            setSelectedFile(file);
-        };
-        reader.readAsDataURL(file);
+        try {
+            // Compress image for better performance (optional optimization)
+            const compressedFile = await compressImage(file);
+
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPreview(e.target?.result as string);
+                setSelectedFile(compressedFile);
+            };
+            reader.readAsDataURL(compressedFile);
+        } catch (compressionError) {
+            // If compression fails, use original file
+            console.warn('Image compression failed, using original:', compressionError);
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPreview(e.target?.result as string);
+                setSelectedFile(file);
+            };
+            reader.readAsDataURL(file);
+        }
     };
 
     const handleFileInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
-        handleFileSelect(file || null);
+        void handleFileSelect(file || null);
     };
 
     const handleUsePhoto = () => {
@@ -105,9 +120,14 @@ export function PhotoCaptureStep({ onImageSelected, onCancel }: PhotoCaptureStep
                         <CardContent className="pt-4">
                             <img
                                 src={preview}
-                                alt="Receipt preview"
+                                alt="Preview of selected receipt image"
                                 className="w-full h-auto max-h-96 object-contain rounded-md"
+                                role="img"
+                                aria-describedby="image-preview-description"
                             />
+                            <div id="image-preview-description" className="sr-only">
+                                Preview of the receipt image you selected. You can use this photo or retake it.
+                            </div>
                         </CardContent>
                     </Card>
 
@@ -126,14 +146,15 @@ export function PhotoCaptureStep({ onImageSelected, onCancel }: PhotoCaptureStep
                         <p>Take a photo of your receipt or select an image from your device</p>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 touch-manipulation">
                         <Button
                             variant="outline"
                             size="lg"
                             onClick={triggerCamera}
-                            className="h-24 flex-col space-y-2"
+                            className="h-24 flex-col space-y-2 touch-manipulation active:scale-95 transition-transform"
+                            aria-label="Take a photo of your receipt using camera"
                         >
-                            <Camera className="h-8 w-8" />
+                            <Camera className="h-8 w-8" aria-hidden="true" />
                             <span>Take Photo</span>
                         </Button>
 
@@ -141,9 +162,10 @@ export function PhotoCaptureStep({ onImageSelected, onCancel }: PhotoCaptureStep
                             variant="outline"
                             size="lg"
                             onClick={triggerFileSelect}
-                            className="h-24 flex-col space-y-2"
+                            className="h-24 flex-col space-y-2 touch-manipulation active:scale-95 transition-transform"
+                            aria-label="Choose an image file from your device"
                         >
-                            <Upload className="h-8 w-8" />
+                            <Upload className="h-8 w-8" aria-hidden="true" />
                             <span>Choose File</span>
                         </Button>
                     </div>
