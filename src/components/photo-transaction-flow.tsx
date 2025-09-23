@@ -35,6 +35,16 @@ export function PhotoTransactionFlow({
     }
   }, [isOnline, step]);
 
+  // Cleanup on component unmount for privacy
+  useEffect(() => {
+    return () => {
+      // Clear any sensitive data when component unmounts
+      setSelectedImage(null);
+      setExtractedTransactions([]);
+      setError(null);
+    };
+  }, []);
+
   const handleImageSelected = (file: File) => {
     setSelectedImage(file);
     setError(null);
@@ -56,8 +66,12 @@ export function PhotoTransactionFlow({
   };
 
   const handleBackToCapture = () => {
+    // Clean up any selected image data
+    if (selectedImage) {
+      // Clear the file reference for garbage collection
+      setSelectedImage(null);
+    }
     setStep('capture');
-    setSelectedImage(null);
     setExtractedTransactions([]);
     setError(null);
   };

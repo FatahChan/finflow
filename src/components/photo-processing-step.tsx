@@ -156,6 +156,7 @@ export function PhotoProcessingStep({
                             <div className="text-xs text-muted-foreground space-y-1">
                                 <p>💡 <strong>Tip:</strong> Make sure the receipt is clearly visible and well-lit</p>
                                 <p>📱 <strong>Note:</strong> Processing may take 10-30 seconds depending on image complexity</p>
+                                <p>🔒 <strong>Privacy:</strong> Your image is processed securely and automatically deleted after processing</p>
                             </div>
                         )}
                     </div>
