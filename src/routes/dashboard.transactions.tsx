@@ -53,6 +53,9 @@ import { toast } from "sonner";
 import { Header } from "@/components/header";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { NativeSelect } from "@/components/ui/native-select";
+import { PhotoTransactionFlow } from "@/components/photo-transaction-flow";
+import type { ExtractedTransaction } from "@/lib/photo-processing-service";
+import { Camera } from "lucide-react";
 
 const searchSchema = z.object({
   filterAccount: z.string().check(z.minLength(1, "Filter Account is required")),
@@ -317,6 +320,7 @@ function TransactionDialog({
   >["transactions"][number];
 }) {
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<'manual' | 'photo'>('manual');
 
   const handleSubmit = ({ accountId, ...data }: TransactionsFormZodType) => {
     try {
@@ -343,9 +347,67 @@ function TransactionDialog({
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(`Failed to create transaction: ${error.message}`);
-      }else{
+      } else {
         toast.error(`Failed to create transaction: ${String(error)}`);
       }
+    }
+  };
+
+  // Get accounts data for photo transactions
+  const { data: accountsData } = db.useQuery(accountsQuery);
+  const availableAccounts = accountsData?.accounts || [];
+
+  const handlePhotoTransactions = (extractedTransactions: ExtractedTransaction[]) => {
+    try {
+      // Use the first available account - in a real app, user should select
+      const firstAccount = availableAccounts[0];
+
+      if (availableAccounts.length === 0) {
+        throw new Error('No accounts available. Please create an account first.');
+      }
+
+      // Create multiple transactions from photo extraction
+      const transactionPromises = extractedTransactions.map((extractedData) => {
+        const _id = id();
+        return [
+          db.tx.transactions[_id].create({
+            name: extractedData.name,
+            amount: extractedData.amount,
+            type: extractedData.type,
+            category: extractedData.category,
+            transactionAt: extractedData.transactionAt,
+          }),
+          db.tx.transactions[_id].link({
+            account: firstAccount.id,
+          }),
+        ];
+      });
+
+      // Flatten the array of transaction operations
+      const allOperations = transactionPromises.flat();
+      void db.transact(allOperations);
+
+      toast.success(`Created ${extractedTransactions.length.toString()} transaction${extractedTransactions.length !== 1 ? 's' : ''} from photo`);
+      setOpen(false);
+      setMode('manual'); // Reset mode for next time
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Failed to create transactions: ${error.message}`);
+      } else {
+        toast.error(`Failed to create transactions: ${String(error)}`);
+      }
+    }
+  };
+
+  const handleModeSwitch = (newMode: 'manual' | 'photo') => {
+    setMode(newMode);
+  };
+
+  const handleDialogClose = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      // Reset mode when dialog closes
+      setMode('manual');
     }
   };
 
@@ -358,7 +420,7 @@ function TransactionDialog({
     transactionAt: transaction?.transactionAt,
   });
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
         {children ? (
           children
@@ -372,25 +434,65 @@ function TransactionDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {transaction ? "Edit Transaction" : "Add Transaction"}
           </DialogTitle>
         </DialogHeader>
-        <TransactionForm
-          onSubmit={handleSubmit}
-          defaultValues={parsedTransaction ?? undefined}
-        >
-          <Button type="submit" className="flex-1">
-            {transaction ? "Update" : "Create"}
-          </Button>
-          <DialogClose asChild>
-            <Button type="button" variant="outline" className="flex-1">
-              Cancel
+
+        {/* Mode selection for new transactions */}
+        {!transaction && (
+          <div className="flex space-x-2 mb-4">
+            <Button
+              variant={mode === 'manual' ? 'default' : 'outline'}
+              onClick={() => {
+                handleModeSwitch('manual');
+              }}
+              className="flex-1"
+            >
+              Manual Entry
             </Button>
-          </DialogClose>
-        </TransactionForm>
+            <Button
+              variant={mode === 'photo' ? 'default' : 'outline'}
+              onClick={() => {
+                handleModeSwitch('photo');
+              }}
+              className="flex-1"
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              Add from Photo
+            </Button>
+          </div>
+        )}
+
+        {/* Content based on mode */}
+        {mode === 'manual' || transaction ? (
+          <TransactionForm
+            onSubmit={handleSubmit}
+            defaultValues={parsedTransaction ?? undefined}
+          >
+            <Button type="submit" className="flex-1">
+              {transaction ? "Update" : "Create"}
+            </Button>
+            <DialogClose asChild>
+              <Button type="button" variant="outline" className="flex-1">
+                Cancel
+              </Button>
+            </DialogClose>
+          </TransactionForm>
+        ) : (
+          <PhotoTransactionFlow
+            categories={{
+              credit: categories$.credit.get(),
+              debit: categories$.debit.get(),
+            }}
+            onTransactionsExtracted={handlePhotoTransactions}
+            onCancel={() => {
+              handleModeSwitch('manual');
+            }}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );

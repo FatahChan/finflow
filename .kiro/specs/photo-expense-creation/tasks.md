@@ -20,19 +20,19 @@
   - Add responsive design for mobile camera access
   - _Requirements: 1.1, 1.2, 6.1_
 
-- [ ] 4. Implement photo processing workflow components
+- [x] 4. Implement photo processing workflow components
   - Create `PhotoProcessingStep` component with loading states
   - Build `PhotoReviewStep` component for transaction review
   - Implement `PhotoTransactionFlow` orchestrator component
   - _Requirements: 1.3, 1.4, 6.1, 6.2_
 
-- [ ] 5. Create client-side photo processing service
+- [x] 5. Create client-side photo processing service
   - Build `PhotoProcessingService` to call server action
   - Implement FormData creation for image upload to server action
   - Add client-side image validation and compression
   - _Requirements: 1.3, 6.1, 6.2_
 
-- [ ] 6. Integrate photo flow into existing transaction dialog
+- [x] 6. Integrate photo flow into existing transaction dialog
   - Add "Add from Photo" button to existing `TransactionDialog`
   - Modify dialog to support photo workflow alongside manual entry
   - Ensure seamless transition between photo and manual modes
