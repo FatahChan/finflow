@@ -55,7 +55,8 @@ import { NavigationDrawer } from "@/components/navigation-drawer";
 import { NativeSelect } from "@/components/ui/native-select";
 import { PhotoTransactionFlow } from "@/components/photo-transaction-flow";
 import type { ExtractedTransaction } from "@/lib/photo-processing-service";
-import { Camera } from "lucide-react";
+import { Camera, WifiOff } from "lucide-react";
+import { useIsOnline } from "react-use-is-online";
 
 const searchSchema = z.object({
   filterAccount: z.string().check(z.minLength(1, "Filter Account is required")),
@@ -321,6 +322,7 @@ function TransactionDialog({
 }) {
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState<'manual' | 'photo'>('manual');
+  const { isOnline } = useIsOnline();
 
   const handleSubmit = ({ accountId, ...data }: TransactionsFormZodType) => {
     try {
@@ -400,6 +402,11 @@ function TransactionDialog({
   };
 
   const handleModeSwitch = (newMode: 'manual' | 'photo') => {
+    // Don't allow switching to photo mode when offline
+    if (newMode === 'photo' && !isOnline) {
+      toast.error('Photo processing requires an internet connection');
+      return;
+    }
     setMode(newMode);
   };
 
@@ -443,26 +450,40 @@ function TransactionDialog({
 
         {/* Mode selection for new transactions */}
         {!transaction && (
-          <div className="flex space-x-2 mb-4">
-            <Button
-              variant={mode === 'manual' ? 'default' : 'outline'}
-              onClick={() => {
-                handleModeSwitch('manual');
-              }}
-              className="flex-1"
-            >
-              Manual Entry
-            </Button>
-            <Button
-              variant={mode === 'photo' ? 'default' : 'outline'}
-              onClick={() => {
-                handleModeSwitch('photo');
-              }}
-              className="flex-1"
-            >
-              <Camera className="h-4 w-4 mr-2" />
-              Add from Photo
-            </Button>
+          <div className="space-y-2 mb-4">
+            <div className="flex space-x-2">
+              <Button
+                variant={mode === 'manual' ? 'default' : 'outline'}
+                onClick={() => {
+                  handleModeSwitch('manual');
+                }}
+                className="flex-1"
+              >
+                Manual Entry
+              </Button>
+              <Button
+                variant={mode === 'photo' ? 'default' : 'outline'}
+                onClick={() => {
+                  handleModeSwitch('photo');
+                }}
+                disabled={!isOnline}
+                className="flex-1"
+              >
+                {!isOnline ? (
+                  <WifiOff className="h-4 w-4 mr-2" />
+                ) : (
+                  <Camera className="h-4 w-4 mr-2" />
+                )}
+                Add from Photo
+              </Button>
+            </div>
+            
+            {/* Offline message */}
+            {!isOnline && (
+              <div className="text-sm text-muted-foreground text-center p-2 bg-muted rounded-md">
+                📶 Photo processing requires an internet connection
+              </div>
+            )}
           </div>
         )}
 
