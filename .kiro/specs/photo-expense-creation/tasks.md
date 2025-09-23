@@ -1,13 +1,13 @@
 # Implementation Plan
 
-- [ ] 1. Set up server-side infrastructure for photo processing
+- [x] 1. Set up server-side infrastructure for photo processing
   - Create server action `processReceiptPhoto` in `src/actions/` directory
   - Add multipart form data handling for image uploads in server action
   - Ensure authentication middleware runs before processing
   - Implement basic image validation (file type, size limits)
   - _Requirements: 5.1, 5.2, 5.3_
 
-- [ ] 2. Integrate Google Gemini AI service on server
+- [x] 2. Integrate Google Gemini AI service on server
   - Install and configure `@ai-sdk/google` and `ai` packages
   - Create server-side AI extraction service using Gemini model
   - Implement transaction data extraction with Zod schema validation

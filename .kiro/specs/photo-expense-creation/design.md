@@ -162,13 +162,39 @@ transactions: i.entity({
 
 // New validation schema for AI extraction
 const aiExtractionSchema = z.object({
-  name: z.string().min(1).describe("Merchant or transaction name"),
-  amount: z.number().min(0.01).describe("Transaction amount"),
-  type: z.enum(["credit", "debit"]).describe("Transaction type"),
-  category: z.string().min(1).describe("Transaction category"),
-  transactionAt: z.string().datetime().describe("Transaction date in ISO format"),
+  name: z.string().check(z.minLength(1, "Name is required")),
+  amount: z.number().check(z.minimum(0.01, "Amount is required")),
+  type: z.enum(["credit", "debit"]),
+  category: z.string().check(z.minLength(1, "Category is required")),
+  transactionAt: z.string().check(z.minLength(1, "Transaction Date is required")),
 });
 ```
+
+### Category Integration
+The AI will suggest categories based on user's saved preferences from Legend State:
+
+```typescript
+// User categories from src/lib/legend-state.ts
+categories$ = {
+  credit: ["Income", "Investment", "Salary", "Other"],
+  debit: [
+    "Food & Dining",
+    "Transportation", 
+    "Shopping",
+    "Entertainment",
+    "Bills & Utilities",
+    "Healthcare",
+    "Education",
+    "Travel",
+    "Other"
+  ]
+}
+```
+
+The AI prompt includes these common categories as guidance, and the client-side review step will validate against the user's actual saved categories. If the AI suggests a category not in the user's list, the client will either:
+1. Map it to the closest existing category
+2. Default to "Other" 
+3. Allow the user to select from their saved categories during review
 
 ### Image Processing Configuration
 ```typescript
