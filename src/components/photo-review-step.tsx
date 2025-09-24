@@ -136,11 +136,8 @@ function TransactionCard({
     };
 
     const formatDate = (dateString: string) => {
-        try {
-            return new Date(dateString).toLocaleDateString();
-        } catch {
-            return dateString;
-        }
+        const d = new Date(dateString);
+        return Number.isNaN(d.getTime()) ? dateString : d.toLocaleDateString();
     };
 
     if (isEditing) {
