@@ -7,12 +7,13 @@ import * as z from 'zod/mini';
 // Function to create transaction schema with dynamic categories
 function getTransactionZodSchema(categories: { credit: string[]; debit: string[] }) {
     const allCategories = [...categories.credit, ...categories.debit];
+    const allowed = allCategories.length > 0 ? allCategories : ['Other'];
     
     return z.object({
         name: z.string().check(z.minLength(1, "Name is required")),
         amount: z.number().check(z.minimum(0.01, "Amount is required")),
         type: z.enum(["credit", "debit"]),
-        category: z.enum(allCategories as [string, ...string[]]),
+        category: z.enum(allowed as [string, ...string[]]),
         transactionAt: z.string().check(z.minLength(1, "Transaction Date is required")),
     });
 }
