@@ -1,16 +1,15 @@
 import { createEnv } from "@t3-oss/env-core";
 import * as z from "zod/mini";
-
 export const serverEnv = createEnv({
   server: {
     VITE_INSTANT_APP_ID: z.string().check(z.minLength(1, "InstantDB App ID is required")),
     INSTANT_APP_ADMIN_TOKEN: z.string().check(z.minLength(1, "InstantDB Admin Token is required")),
+    GOOGLE_GENERATIVE_AI_API_KEY: z.string().check(z.minLength(1, "Google Generative AI API Key is required")),
   },
   /*
    * What object holds the environment variables at runtime. This is usually
    * `process.env` or `import.meta.env`.
    */
-   
   runtimeEnv: process.env,
 
   /*

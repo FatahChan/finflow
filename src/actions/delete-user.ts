@@ -8,7 +8,7 @@ const db = init({
 });
 
 export const deleteUser = createServerFn({ method: 'POST' })
-  .validator(async (refreshToken: string) => {
+  .inputValidator(async (refreshToken: string) => {
     if (!refreshToken) {
       throw new Error('Refresh token is required')
     }

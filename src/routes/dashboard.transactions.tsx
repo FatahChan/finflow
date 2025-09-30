@@ -53,6 +53,10 @@ import { toast } from "sonner";
 import { Header } from "@/components/header";
 import { NavigationDrawer } from "@/components/navigation-drawer";
 import { NativeSelect } from "@/components/ui/native-select";
+import { PhotoTransactionFlow } from "@/components/photo-transaction-flow";
+import type { ExtractedTransaction } from "@/lib/photo-processing-service";
+import { Camera, WifiOff } from "lucide-react";
+import { useIsOnline } from "react-use-is-online";
 
 const searchSchema = z.object({
   filterAccount: z.string().check(z.minLength(1, "Filter Account is required")),
@@ -317,6 +321,8 @@ function TransactionDialog({
   >["transactions"][number];
 }) {
   const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<'manual' | 'photo'>('manual');
+  const { isOnline } = useIsOnline();
 
   const handleSubmit = ({ accountId, ...data }: TransactionsFormZodType) => {
     try {
@@ -343,9 +349,72 @@ function TransactionDialog({
     } catch (error: unknown) {
       if (error instanceof Error) {
         toast.error(`Failed to create transaction: ${error.message}`);
-      }else{
+      } else {
         toast.error(`Failed to create transaction: ${String(error)}`);
       }
+    }
+  };
+
+  // Get accounts data for photo transactions
+  const { data: accountsData } = db.useQuery(accountsQuery);
+  const availableAccounts = accountsData?.accounts || [];
+
+  const handlePhotoTransactions = (extractedTransactions: ExtractedTransaction[]) => {
+    try {
+      // Use the first available account - in a real app, user should select
+      const firstAccount = availableAccounts[0];
+
+      if (availableAccounts.length === 0) {
+        throw new Error('No accounts available. Please create an account first.');
+      }
+
+      // Create multiple transactions from photo extraction
+      const transactionPromises = extractedTransactions.map((extractedData) => {
+        const _id = id();
+        return [
+          db.tx.transactions[_id].create({
+            name: extractedData.name,
+            amount: extractedData.amount,
+            type: extractedData.type,
+            category: extractedData.category,
+            transactionAt: extractedData.transactionAt,
+          }),
+          db.tx.transactions[_id].link({
+            account: firstAccount.id,
+          }),
+        ];
+      });
+
+      // Flatten the array of transaction operations
+      const allOperations = transactionPromises.flat();
+      void db.transact(allOperations);
+
+      toast.success(`Created ${extractedTransactions.length.toString()} transaction${extractedTransactions.length !== 1 ? 's' : ''} from photo`);
+      setOpen(false);
+      setMode('manual'); // Reset mode for next time
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error(`Failed to create transactions: ${error.message}`);
+      } else {
+        toast.error(`Failed to create transactions: ${String(error)}`);
+      }
+    }
+  };
+
+  const handleModeSwitch = (newMode: 'manual' | 'photo') => {
+    // Don't allow switching to photo mode when offline
+    if (newMode === 'photo' && !isOnline) {
+      toast.error('Photo processing requires an internet connection');
+      return;
+    }
+    setMode(newMode);
+  };
+
+  const handleDialogClose = (isOpen: boolean) => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      // Reset mode when dialog closes
+      setMode('manual');
     }
   };
 
@@ -358,7 +427,7 @@ function TransactionDialog({
     transactionAt: transaction?.transactionAt,
   });
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
         {children ? (
           children
@@ -372,25 +441,79 @@ function TransactionDialog({
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {transaction ? "Edit Transaction" : "Add Transaction"}
           </DialogTitle>
         </DialogHeader>
-        <TransactionForm
-          onSubmit={handleSubmit}
-          defaultValues={parsedTransaction ?? undefined}
-        >
-          <Button type="submit" className="flex-1">
-            {transaction ? "Update" : "Create"}
-          </Button>
-          <DialogClose asChild>
-            <Button type="button" variant="outline" className="flex-1">
-              Cancel
+
+        {/* Mode selection for new transactions */}
+        {!transaction && (
+          <div className="space-y-2 mb-4">
+            <div className="flex space-x-2">
+              <Button
+                variant={mode === 'manual' ? 'default' : 'outline'}
+                onClick={() => {
+                  handleModeSwitch('manual');
+                }}
+                className="flex-1"
+              >
+                Manual Entry
+              </Button>
+              <Button
+                variant={mode === 'photo' ? 'default' : 'outline'}
+                onClick={() => {
+                  handleModeSwitch('photo');
+                }}
+                disabled={!isOnline}
+                className="flex-1"
+              >
+                {!isOnline ? (
+                  <WifiOff className="h-4 w-4 mr-2" />
+                ) : (
+                  <Camera className="h-4 w-4 mr-2" />
+                )}
+                Add from Photo
+              </Button>
+            </div>
+            
+            {/* Offline message */}
+            {!isOnline && (
+              <div className="text-sm text-muted-foreground text-center p-2 bg-muted rounded-md">
+                📶 Photo processing requires an internet connection
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Content based on mode */}
+        {mode === 'manual' || transaction ? (
+          <TransactionForm
+            onSubmit={handleSubmit}
+            defaultValues={parsedTransaction ?? undefined}
+          >
+            <Button type="submit" className="flex-1">
+              {transaction ? "Update" : "Create"}
             </Button>
-          </DialogClose>
-        </TransactionForm>
+            <DialogClose asChild>
+              <Button type="button" variant="outline" className="flex-1">
+                Cancel
+              </Button>
+            </DialogClose>
+          </TransactionForm>
+        ) : (
+          <PhotoTransactionFlow
+            categories={{
+              credit: categories$.credit.get(),
+              debit: categories$.debit.get(),
+            }}
+            onTransactionsExtracted={handlePhotoTransactions}
+            onCancel={() => {
+              handleModeSwitch('manual');
+            }}
+          />
+        )}
       </DialogContent>
     </Dialog>
   );
