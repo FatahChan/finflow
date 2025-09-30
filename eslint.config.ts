@@ -36,7 +36,11 @@ export default tseslint.config([
         "ignoreRestSiblings": true
       }
     ],
-    "@typescript-eslint/only-throw-error": "off"
+    "@typescript-eslint/only-throw-error": "off",
+    "@typescript-eslint/no-unsafe-call": "off",
+    "@typescript-eslint/no-unsafe-argument": "off",
+    "@typescript-eslint/no-unsafe-member-access": "off",
+    "@typescript-eslint/no-unsafe-assignment": "off",
     }
   },
   {

@@ -36,7 +36,7 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
 export const processReceiptPhoto = createServerFn({ method: 'POST' })
-    .validator((formData: FormData) => {
+    .inputValidator((formData: FormData) => {
         const imageFile = formData.get('image') as File | null;
         const categoriesJson = formData.get('categories') as string | null;
 
@@ -92,7 +92,7 @@ export const processReceiptPhoto = createServerFn({ method: 'POST' })
               * For income (credit): ${categories.credit.join(', ')}`;
 
             // Process image with AI
-            const { object } = await generateObject({
+            const result = await generateObject({
                 model,
                 providerOptions: {
                     google: {
@@ -123,13 +123,15 @@ export const processReceiptPhoto = createServerFn({ method: 'POST' })
             Return an array of transaction objects matching the schema, even if it's just one transaction.`,
                     }]
                 }]
+            }).catch(() => {
+                throw new Error('Failed to process receipt photo');
             });
 
             const processingTime = Date.now() - startTime;
 
             return {
                 success: true,
-                transactions: object,
+                transactions: result.object,
                 processingTime,
             };
 

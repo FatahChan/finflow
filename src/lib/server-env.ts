@@ -1,6 +1,5 @@
 import { createEnv } from "@t3-oss/env-core";
 import * as z from "zod/mini";
-
 export const serverEnv = createEnv({
   server: {
     VITE_INSTANT_APP_ID: z.string().check(z.minLength(1, "InstantDB App ID is required")),
@@ -11,7 +10,6 @@ export const serverEnv = createEnv({
    * What object holds the environment variables at runtime. This is usually
    * `process.env` or `import.meta.env`.
    */
-   
   runtimeEnv: process.env,
 
   /*
