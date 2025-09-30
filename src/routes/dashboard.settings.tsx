@@ -1,39 +1,36 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { version } from "@/../package.json";
 import { Header } from "@/components/header";
 import { NavigationDrawer } from "@/components/navigation-drawer";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { db } from "@/lib/instant-db";
-import { Memo } from "@legendapp/state/react";
-import {
-  currencies,
-  defaultCurrency$,
-  categories$,
-  type Currency,
-} from "@/lib/legend-state";
-import { Globe, Moon, Download, Trash2, Tags } from "lucide-react";
-import { TagInput } from "@/components/ui/tag-input";
-import { NativeSelect } from "@/components/ui/native-select";
-import { useTheme } from "next-themes";
-import type { ComponentProps } from "react";
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
+  AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { NativeSelect } from "@/components/ui/native-select";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { TagInput } from "@/components/ui/tag-input";
+import { db } from "@/lib/instant-db";
+import {
+  categories$,
+  currencies,
+  defaultCurrency$,
+  type Currency,
+} from "@/lib/legend-state";
+import { Memo } from "@legendapp/state/react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Download, Globe, Moon, Tags, Trash2 } from "lucide-react";
+import { useTheme } from "next-themes";
+import type { ComponentProps } from "react";
 import { useIsOnline } from "react-use-is-online";
-import { deleteUser } from "@/actions/delete-user";
-import { toast } from "sonner";
-import { version } from "@/../package.json";
 
 export const Route = createFileRoute("/dashboard/settings")({
   component: SettingsPage,
@@ -232,7 +229,7 @@ function SettingsPage() {
 function DeleteAllDataButton({ ...props }: ComponentProps<typeof Button>) {
   const auth = db.useAuth();
   const { isOnline } = useIsOnline();
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const refreshToken = auth.user?.refresh_token;
   return (
     <AlertDialog>
@@ -264,7 +261,7 @@ function DeleteAllDataButton({ ...props }: ComponentProps<typeof Button>) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
+            {/* <AlertDialogAction
               onClick={() => {
                 deleteUser({
                   data: refreshToken,
@@ -284,7 +281,7 @@ function DeleteAllDataButton({ ...props }: ComponentProps<typeof Button>) {
               variant="destructive"
             >
               Continue
-            </AlertDialogAction>
+            </AlertDialogAction> */}
           </AlertDialogFooter>
         </AlertDialogContent>
       ) : null}

@@ -1,3 +1,4 @@
+/// <reference types="vite/client" />
 import css from "./global.css?url";
 import type { ReactNode } from "react";
 import {

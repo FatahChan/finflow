@@ -5,6 +5,7 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
 import viteReactOxc from "@vitejs/plugin-react-oxc";
 import { workboxGenerate } from './workbox-generate';
+import { nitroV2Plugin } from '@tanstack/nitro-v2-vite-plugin'
 
 export default defineConfig({
   server: {
@@ -13,8 +14,6 @@ export default defineConfig({
   plugins: [
     tsConfigPaths(),
     tanstackStart({
-      customViteReactPlugin: true,
-      target: process.env.TARGET || "vercel",
       spa: {
         enabled: true,
       },
@@ -56,6 +55,10 @@ export default defineConfig({
           },
         },
       ]
+    }),
+    nitroV2Plugin({
+      vercel: {
+      },
     }),
     {
       "name": "workbox",
