@@ -55,10 +55,8 @@ import { NavigationDrawer } from "@/components/navigation-drawer";
 import { NativeSelect } from "@/components/ui/native-select";
 
 const searchSchema = z.object({
-  filterAccount: z.string().check(z.minLength(1, "Filter Account is required")),
-  filterType: z
-    .enum(["all", "credit", "debit"])
-    .check(z.minLength(1, "Filter Type is required")),
+  filterAccount: z.optional(z.string()),
+  filterType: z.optional(z.enum(["all", "credit", "debit"])),
 });
 
 export const Route = createFileRoute("/dashboard/transactions")({
@@ -427,7 +425,7 @@ function TransactionForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={void form.handleSubmit(onSubmit)} className="space-y-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
         <FormField
           control={form.control}
           name="accountId"

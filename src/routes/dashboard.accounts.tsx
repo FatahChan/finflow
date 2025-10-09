@@ -301,9 +301,7 @@ function AccountForm({
   return (
     <Form {...form}>
       <form
-        onSubmit={(e) => {
-          void form.handleSubmit(onSubmit)(e);
-        }}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4"
       >
         <FormField
