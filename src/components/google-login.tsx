@@ -58,7 +58,19 @@ export function GoogleLoginButton() {
               if (!auth) {
                 throw new Error("Failed to get auth");
               }
+              const {
+                data: { profiles: existingProfile },
+              } = await db.queryOnce({
+                profiles: {
+                  $: { where: { user: auth.id }, first: 1 },
+                },
+              });
+              if (existingProfile.length > 0 && existingProfile[0].id) {
+                return;
+              }
+
               const _id = id();
+
               await db.transact([
                 db.tx.profiles[_id].create({
                   name: jwt.name,

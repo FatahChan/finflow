@@ -29,3 +29,4 @@ dist-ssr
 .output
 .vercel
 dev-dist
+.env*.local
