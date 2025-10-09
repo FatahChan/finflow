@@ -1,7 +1,7 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-
+import dayjs from "dayjs";
 import { Plus, Edit, Trash2, HandCoins } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -39,7 +39,7 @@ import {
 import { useForm } from "react-hook-form";
 import * as z from "zod/mini";
 import { db } from "@/lib/instant-db";
-import { id } from "@instantdb/react";
+import {  id } from "@instantdb/react";
 import {
   accountsQuery,
   transactionsWithAccountQuery,
@@ -549,8 +549,8 @@ function TransactionForm({
               <FormControl>
                 <Input
                   type="date"
-                  value={field.value}
-                  onChange={field.onChange}
+                  value={dayjs(field.value).format("YYYY-MM-DD")}
+                  onChange={(e) => { field.onChange(dayjs(e.target.value).toISOString()); }}
                   className="w-full"
                 />
               </FormControl>
