@@ -1,4 +1,5 @@
 import { useCanGoBack, useRouter } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { ArrowLeft } from "lucide-react";
 
@@ -12,15 +13,18 @@ export function Header({
   actions?: React.ReactNode;
 }) {
   const router = useRouter();
-  const canGoBack = useCanGoBack();
+  const hookCanGoBack = useCanGoBack();
+  const [canGoBack, setCanGoBack] = useState(false);
+  useEffect(() => setCanGoBack(hookCanGoBack), [hookCanGoBack]);
   return (
     <div className="bg-card border-b px-4 py-4">
       <div className="flex items-center space-x-4">
-        {canGoBack && backButton ? (
+        {backButton ? (
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => { router.history.back(); }}
+            disabled={!canGoBack}
+            onClick={() => { canGoBack && router.history.back(); }}
           >
             <ArrowLeft className="h-5 w-5" />
           </Button>

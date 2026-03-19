@@ -8,7 +8,6 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { Toaster } from "@/components/ui/sonner";
-import { ThemeProvider } from "next-themes";
 import { useEffect } from "react";
 import { registerServiceWorker } from "@/lib/sw-register";
 
@@ -71,17 +70,15 @@ function RootComponent() {
 
 function RootDocument({ children }: Readonly<{ children: ReactNode }>) {
   return (
-    <ThemeProvider attribute="class">
       <html suppressHydrationWarning>
         <head>
           <HeadContent />
         </head>
-        <body>
+        <body className="dark">
+          <Scripts />
           {children}
           <Toaster />
-          <Scripts />
         </body>
       </html>
-    </ThemeProvider>
   );
 }
