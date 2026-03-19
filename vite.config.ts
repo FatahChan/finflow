@@ -1,65 +1,29 @@
 // vite.config.ts
 import { defineConfig } from "vite";
-import tsConfigPaths from "vite-tsconfig-paths";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import tailwindcss from "@tailwindcss/vite";
-import viteReactOxc from "@vitejs/plugin-react-oxc";
+import react from "@vitejs/plugin-react";
 import { workboxGenerate } from './workbox-generate';
-import { nitroV2Plugin } from '@tanstack/nitro-v2-vite-plugin'
+import netlify from '@netlify/vite-plugin-tanstack-start'
 
 export default defineConfig({
   server: {
     port: 3000,
   },
+  resolve: {
+    tsconfigPaths: true,
+  },
   plugins: [
-    tsConfigPaths(),
     tanstackStart({
-      spa: {
-        enabled: true,
-      },
-      pages:[
+      pages: [
+        { path: "/", prerender: { enabled: true } },
+        { path: "/about", prerender: { enabled: true } },
+        { path: "/privacy", prerender: { enabled: true } },
+        { path: "/terms", prerender: { enabled: true } },
+      ],
+    }),
 
-        {
-          path: "/dashboard/home",
-          prerender: {
-            enabled: true,
-            outputPath: "dashboard/home.html",
-          },
-        },
-        {
-          path: "/",
-          prerender: {
-            enabled: true,
-            outputPath: "index.html",
-          },
-        },
-        {
-          path: "/about",
-          prerender: {
-            enabled: true,
-            outputPath: "about.html",
-          },
-        },
-        {
-          path: "/privacy",
-          prerender: {
-            enabled: true,
-            outputPath: "privacy.html",
-          },
-        },
-        {
-          path: "/terms",
-          prerender: {
-            enabled: true,
-            outputPath: "terms.html",
-          },
-        },
-      ]
-    }),
-    nitroV2Plugin({
-      vercel: {
-      },
-    }),
+    netlify(),
     {
       "name": "workbox",
       applyToEnvironment(environment) {
@@ -130,7 +94,7 @@ export default defineConfig({
     //     enabled: true,
     //   }
     // }),
-    viteReactOxc(),
+    react(),
     tailwindcss(),
   ],
 });
